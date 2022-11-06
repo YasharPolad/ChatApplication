@@ -15,5 +15,15 @@ public class SlackerDbContext : IdentityDbContext<IdentityUser>
 
 	}
 
-	 
+	protected override void OnModelCreating(ModelBuilder builder)
+	{
+		base.OnModelCreating(builder);
+
+		builder.Entity<IdentityRole>().HasData(
+			new IdentityRole { Name = "Default", NormalizedName = "Default"},
+			new IdentityRole { Name = "Manager", NormalizedName = "Manager"},
+			new IdentityRole { Name = "Admin", NormalizedName = "Admin"});
+	}
+
+
 }
