@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Slacker.Application.Interfaces;
+using Slacker.Infrastructure.ConfigOptions;
 using Slacker.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,8 @@ public static class ConfigureServices
         }).AddEntityFrameworkStores<SlackerDbContext>().AddDefaultTokenProviders();
 
         builder.Services.AddTransient<IIdentityService, IdentityService>();
+
+        builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(nameof(JwtSettings)));
 
         builder.Services.AddAuthentication(authOptions =>
         {

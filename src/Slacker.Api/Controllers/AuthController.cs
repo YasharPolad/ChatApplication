@@ -49,7 +49,6 @@ public class AuthController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            //TODO: Turn model state error into our restful format
 
             var result = new ErrorResponse();
             ModelState.ToList().ForEach(error => result.Errors.Add(error.Value.ToString()));
