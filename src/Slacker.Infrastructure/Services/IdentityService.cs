@@ -18,7 +18,6 @@ public class IdentityService : IIdentityService
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly IConfiguration _configuration;
     private readonly JwtSettings _jwtSettings;
 
     public IdentityService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager,
@@ -26,7 +25,6 @@ public class IdentityService : IIdentityService
     {
         _userManager = userManager;
         _roleManager = roleManager;
-        _configuration = configuration;
         _jwtSettings = jwtOptions.Value;
     }
 
@@ -81,28 +79,36 @@ public class IdentityService : IIdentityService
 
     public async Task<RegisterMediatrResult> RegisterUserAsync(string email, string password, string phoneNumber)
     {
+        var registerResult = new RegisterMediatrResult();
         var user = new IdentityUser
         {
             Email = email,
-            UserName = email,
+            UserName = email.Split("@")[0],
             PhoneNumber = phoneNumber,
         };
 
         IdentityResult result = await _userManager.CreateAsync(user, password);
 
-        if(result.Succeeded)
+        if(!result.Succeeded)
         {
-            return new RegisterMediatrResult
-            {
-                IsSuccess = true,
-            };
 
+            registerResult.IsSuccess = false;
+            registerResult.Errors = result.Errors.Select(error => error.Description).ToList();
+            return registerResult;
+            
         }
 
-        return new RegisterMediatrResult
+        IdentityResult roleResult = await _userManager.AddToRoleAsync(user, "Default");
+
+        if (!roleResult.Succeeded)
         {
-            IsSuccess = false,
-            Errors = result.Errors.Select(error => error.Description).ToList()
-        };
+            registerResult.IsSuccess = false;
+            registerResult.Errors = result.Errors.Select(error => error.Description).ToList();
+            return registerResult;
+        }
+
+        registerResult.IsSuccess = true;
+        return registerResult;
+        
     }
 }
