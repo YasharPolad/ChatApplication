@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Slacker.Application.Interfaces;
 using Slacker.Application.Models.User;
+using Slacker.Infrastructure.ConfigOptions;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -17,13 +19,15 @@ public class IdentityService : IIdentityService
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IConfiguration _configuration;
+    private readonly JwtSettings _jwtSettings;
 
-    public IdentityService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, 
-       IConfiguration configuration)
+    public IdentityService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager,
+       IConfiguration configuration, IOptions<JwtSettings> jwtOptions)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _configuration = configuration;
+        _jwtSettings = jwtOptions.Value;
     }
 
     public async Task<LoginMediatrResult> LoginUserAsync(string email, string password)
@@ -57,11 +61,11 @@ public class IdentityService : IIdentityService
             Claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
         }
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
 
         var token = new JwtSecurityToken(
-            issuer: _configuration["JwtSettings:Issuer"],
-            audience: _configuration["JwtSettings:Audience"],
+            issuer: _jwtSettings.Issuer,
+            audience: _jwtSettings.Audience,
             claims: Claims,
             expires: DateTime.Today.AddDays(7),
             signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
