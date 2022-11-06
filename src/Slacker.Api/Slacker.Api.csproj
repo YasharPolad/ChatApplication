@@ -23,8 +23,4 @@
     <ProjectReference Include="..\Slacker.Infrastructure\Slacker.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Contracts\User\Response\" />
-  </ItemGroup>
-
 </Project>
