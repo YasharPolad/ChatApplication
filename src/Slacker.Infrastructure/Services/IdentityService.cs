@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Slacker.Application.Interfaces;
 using Slacker.Application.Models.User;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,13 +15,67 @@ namespace Slacker.Infrastructure.Services;
 public class IdentityService : IIdentityService
 {
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IConfiguration _configuration;
 
-    public IdentityService(UserManager<IdentityUser> userManager)
+    public IdentityService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, 
+       IConfiguration configuration)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
+        _configuration = configuration;
     }
 
-    public async Task<RegisterResponse> RegisterUserAsync(string email, string password, string phoneNumber)
+    public async Task<LoginMediatrResult> LoginUserAsync(string email, string password)
+    {
+        var result = new LoginMediatrResult();
+        var loginUser = await _userManager.FindByEmailAsync(email);
+
+        if(loginUser is null)
+        {
+            result.IsSuccess = false;
+            result.Errors.Add("Username doesn't exist");
+            return result;
+        } 
+        
+        bool passwordCheck = await _userManager.CheckPasswordAsync(loginUser, password);
+        if(!passwordCheck)
+        {
+            result.IsSuccess = false;
+            result.Errors.Add("Username or Password is incorrect");
+            return result;
+        }
+
+        List<Claim> Claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Email, email),
+        };
+
+        var userRoles = await _userManager.GetRolesAsync(loginUser);
+        foreach (var role in userRoles)
+        {
+            Claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+        }
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]));
+
+        var token = new JwtSecurityToken(
+            issuer: _configuration["JwtSettings:Issuer"],
+            audience: _configuration["JwtSettings:Audience"],
+            claims: Claims,
+            expires: DateTime.Today.AddDays(7),
+            signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
+
+        string tokenAsString = new JwtSecurityTokenHandler().WriteToken(token);
+
+        result.IsSuccess = true;
+        result.Token = tokenAsString;
+        result.ExpirationDate = token.ValidTo;
+        return result;
+
+    }
+
+    public async Task<RegisterMediatrResult> RegisterUserAsync(string email, string password, string phoneNumber)
     {
         var user = new IdentityUser
         {
@@ -30,14 +88,14 @@ public class IdentityService : IIdentityService
 
         if(result.Succeeded)
         {
-            return new RegisterResponse
+            return new RegisterMediatrResult
             {
                 IsSuccess = true,
             };
 
         }
 
-        return new RegisterResponse
+        return new RegisterMediatrResult
         {
             IsSuccess = false,
             Errors = result.Errors.Select(error => error.Description).ToList()

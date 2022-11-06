@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Slacker.Application.Interfaces;
 using Slacker.Infrastructure.Services;
 using System;
@@ -31,6 +33,26 @@ public static class ConfigureServices
         }).AddEntityFrameworkStores<SlackerDbContext>().AddDefaultTokenProviders();
 
         builder.Services.AddTransient<IIdentityService, IdentityService>();
+
+        builder.Services.AddAuthentication(authOptions =>
+        {
+            authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+        }).AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            {
+                ValidateAudience = true,
+                ValidateIssuer = true,
+                ValidateIssuerSigningKey = true,
+                RequireExpirationTime = true,
+
+                ValidAudience = builder.Configuration["JwtSettings:Issuer"],
+                ValidIssuer = builder.Configuration["JwtSettings:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
+            };
+        });
         
         
         return builder;
