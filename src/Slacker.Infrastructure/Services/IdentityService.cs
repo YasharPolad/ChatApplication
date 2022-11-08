@@ -1,7 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using Slacker.Application.Interfaces;
 using Slacker.Application.Models.User;
 using Slacker.Infrastructure.ConfigOptions;
@@ -20,18 +25,21 @@ public class IdentityService : IIdentityService
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly JwtSettings _jwtSettings;
 
+
     public IdentityService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager,
-       IConfiguration configuration, IOptions<JwtSettings> jwtOptions)
+       IOptions<JwtSettings> jwtOptions)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _jwtSettings = jwtOptions.Value;
+        
     }
 
     public async Task<LoginMediatrResult> LoginUserAsync(string email, string password)
     {
         var result = new LoginMediatrResult();
         var loginUser = await _userManager.FindByEmailAsync(email);
+
 
         if(loginUser is null)
         {
@@ -45,6 +53,14 @@ public class IdentityService : IIdentityService
         {
             result.IsSuccess = false;
             result.Errors.Add("Username or Password is incorrect");
+            return result;
+        }
+
+        bool isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(loginUser);
+        if(!isEmailConfirmed)
+        {
+            result.IsSuccess = false;
+            result.Errors.Add("You need to confirm your email address before signing in");
             return result;
         }
 
@@ -107,6 +123,10 @@ public class IdentityService : IIdentityService
             return registerResult;
         }
 
+        string emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        
+        registerResult.EmailConfirmationToken = emailConfirmationToken;
+        registerResult.UserEmail = user.Email;
         registerResult.IsSuccess = true;
         return registerResult;
         

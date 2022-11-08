@@ -2,10 +2,15 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Slacker.Api.Contracts;
 using Slacker.Api.Contracts.User.Request;
 using Slacker.Api.Contracts.User.Response;
+using Slacker.Application.Interfaces;
 using Slacker.Application.Users.Commands;
+using Slacker.Infrastructure.Services;
+using System;
+using System.Net.Sockets;
 
 namespace Slacker.Api.Controllers;
 [Route("api/[controller]")]
@@ -14,11 +19,13 @@ public class AuthController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
+    private readonly IEmailService _emailService;
 
-    public AuthController(IMapper mapper, IMediator mediator)
+    public AuthController(IMapper mapper, IMediator mediator, IEmailService emailService)
     {
         _mapper = mapper;
         _mediator = mediator;
+        _emailService = emailService;
     }
 
     [HttpPost("register")]
@@ -37,8 +44,15 @@ public class AuthController : ControllerBase
         var command = _mapper.Map<RegisterRequestCommand>(register);
         var mediatrResponse = await _mediator.Send(command);
 
-        if (mediatrResponse.IsSuccess) 
+        if (mediatrResponse.IsSuccess) //TODO: Needs to be refactored. This shouldn't be in the controller. Should be able to resend new token
+        {
+            var token = mediatrResponse.EmailConfirmationToken;
+            var email = mediatrResponse.UserEmail;
+            var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth", new { token, email }, Request.Scheme);
+            var response = await _emailService.SendMailAsync(email, "Email Confirmation", $"Click this link to confirm your email: {confirmationLink}");
             return Ok();
+        }
+        
         else
             return BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse)); //TODO: Automatically return different error responses depending on the error code
         
@@ -68,5 +82,12 @@ public class AuthController : ControllerBase
             return BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse)); 
         }
 
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ConfirmEmail(string token, string email)
+    {
+
+        return Ok();
     }
 }

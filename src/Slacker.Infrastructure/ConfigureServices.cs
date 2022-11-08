@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using SendGrid.Extensions.DependencyInjection;
 using Slacker.Application.Interfaces;
 using Slacker.Infrastructure.ConfigOptions;
 using Slacker.Infrastructure.Services;
@@ -56,6 +57,12 @@ public static class ConfigureServices
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
             };
         });
+
+        builder.Services.AddSendGrid(options =>
+        {
+            options.ApiKey = builder.Configuration["SendgridSettings:ApiKey"];
+        });
+        builder.Services.AddScoped<IEmailService, SendGridService>();
         
         
         return builder;
