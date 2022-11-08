@@ -87,7 +87,19 @@ public class AuthController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> ConfirmEmail(string token, string email)
     {
-
-        return Ok();
+        var command = new ConfirmEmailCommand
+        {
+            Token = token,
+            Email = email
+        };
+        var mediatrResponse = await _mediator.Send(command);
+        if (mediatrResponse.IsSuccess)
+        {
+            return Ok("You can login now");
+        }
+        else
+        {
+            return BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+        }
     }
 }
