@@ -1,7 +1,9 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -24,15 +26,20 @@ public class IdentityService : IIdentityService
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly JwtSettings _jwtSettings;
-
+    private readonly IEmailService _emailService;
+    private readonly LinkGenerator _linkGenerator;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public IdentityService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager,
-       IOptions<JwtSettings> jwtOptions)
+       IOptions<JwtSettings> jwtOptions, IEmailService emailService, LinkGenerator linkGenerator, 
+       IHttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _jwtSettings = jwtOptions.Value;
-        
+        _emailService = emailService;
+        _linkGenerator = linkGenerator;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<ConfirmEmailMediatrResult> ConfirmEmailAsync(string token, string email)
@@ -58,6 +65,33 @@ public class IdentityService : IIdentityService
         response.IsSuccess = true;
         return response;
 
+    }
+
+    public async Task<ForgotPasswordMediatrResult> ForgotPasswordAsync(string email)
+    {
+        var result = new ForgotPasswordMediatrResult();
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user is null)
+        {
+            result.IsSuccess = false;
+            result.Errors.Add("User by this email doesn't exist");
+            return result;
+        }
+
+        var passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var confirmationLink = _linkGenerator.GetUriByAction(_httpContextAccessor.HttpContext, "ResetPassword", "Auth", new {passwordResetToken, email});
+        var response = await _emailService.SendMailAsync(email, "Password Reset", $"Click this link to reset your password: {confirmationLink}");
+
+        if(response.StatusCode != "Accepted")
+        {
+            result.IsSuccess = false;
+            result.Errors.Add(response.Body);
+            return result;
+        }
+
+        result.IsSuccess = true;
+        return result;
     }
 
     public async Task<LoginMediatrResult> LoginUserAsync(string email, string password)
