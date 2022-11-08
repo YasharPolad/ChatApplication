@@ -35,6 +35,31 @@ public class IdentityService : IIdentityService
         
     }
 
+    public async Task<ConfirmEmailMediatrResult> ConfirmEmailAsync(string token, string email)
+    {
+        var response = new ConfirmEmailMediatrResult();
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if(user is null)
+        {
+            response.IsSuccess = false;
+            response.Errors.Add("User with this email doesn't exist");
+            return response;
+        }
+
+        var result = await _userManager.ConfirmEmailAsync(user, token);
+        if(!result.Succeeded)
+        {
+            response.IsSuccess = false;
+            response.Errors.Add("The token or email is wrong");
+            return response;
+        }
+
+        response.IsSuccess = true;
+        return response;
+
+    }
+
     public async Task<LoginMediatrResult> LoginUserAsync(string email, string password)
     {
         var result = new LoginMediatrResult();
@@ -131,4 +156,5 @@ public class IdentityService : IIdentityService
         return registerResult;
         
     }
+
 }
