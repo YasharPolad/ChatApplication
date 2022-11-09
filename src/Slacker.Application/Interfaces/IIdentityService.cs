@@ -14,4 +14,5 @@ public interface IIdentityService //TODO: This needs to be rewritten so that som
     Task<ConfirmEmailMediatrResult> ConfirmEmailAsync(string token, string email);
     Task<ResetPasswordMediatrResult> ResetPasswordAsync(string newPassword, string email, string token);
     Task<ForgotPasswordMediatrResult> ForgotPasswordAsync(string email);
+    Task<ChangePasswordMediatrResult> ChangePassword(string oldPassword, string newPassword, string email);
 }

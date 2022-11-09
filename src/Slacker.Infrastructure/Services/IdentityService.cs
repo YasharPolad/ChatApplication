@@ -33,6 +33,26 @@ public class IdentityService : IIdentityService
         _httpContextAccessor = httpContextAccessor;
     }
 
+
+
+    public async Task<ChangePasswordMediatrResult> ChangePassword(string oldPassword, string newPassword, string email)
+    {
+        var response = new ChangePasswordMediatrResult();
+        var user = await _userManager.FindByEmailAsync(email); //im not going to validate this because the email comes from an authorized user
+        var changePassword = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+
+        if (!changePassword.Succeeded)
+        {
+            response.IsSuccess = false;
+            response.Errors.Add("Password change failed");
+            return response;
+        }
+
+        response.IsSuccess = true;
+        return response;
+
+    }
+
     public async Task<ConfirmEmailMediatrResult> ConfirmEmailAsync(string token, string email)
     {
         var response = new ConfirmEmailMediatrResult();
