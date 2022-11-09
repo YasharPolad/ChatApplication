@@ -34,39 +34,18 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterRequest register)
     {
-        if(!ModelState.IsValid)
-        {
-            //TODO: Turn model state error into our restful format
-            
-            var result = new ErrorResponse();
-            ModelState.ToList().ForEach(error => result.Errors.Add(error.Value.ToString()));
-            return BadRequest(result);
-
-               
-        }
+        
         var command = _mapper.Map<RegisterRequestCommand>(register);
         var mediatrResponse = await _mediator.Send(command);
-
-        //TODO: Needs to be refactored. This shouldn't be in the controller. Should be able to resend new token
 
         return mediatrResponse.IsSuccess == true
             ? Ok("Registration Successful")
             : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse)); //TODO: Automatically return different error responses depending on the error code
-
-
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest login)
     {
-        if (!ModelState.IsValid)
-        {
-
-            var result = new ErrorResponse();
-            ModelState.ToList().ForEach(error => result.Errors.Add(error.Value.ToString()));
-            return BadRequest(result);
-
-        }
 
         var command = _mapper.Map<LoginCommand>(login);
         var mediatrResponse = await _mediator.Send(command);
@@ -113,14 +92,6 @@ public class AuthController : ControllerBase
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
     {
-        if (!ModelState.IsValid)
-        {
-
-            var result = new ErrorResponse();
-            ModelState.ToList().ForEach(error => result.Errors.Add(error.Value.ToString()));
-            return BadRequest(result);
-
-        }
 
         var command = _mapper.Map<ResetPasswordCommand>(request);
         var mediatrResponse = await _mediator.Send(command);
@@ -134,14 +105,6 @@ public class AuthController : ControllerBase
     [HttpPost("change-password")]
     public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
     {
-        if (!ModelState.IsValid)
-        {
-
-            var result = new ErrorResponse();
-            ModelState.ToList().ForEach(error => result.Errors.Add(error.Value.ToString()));
-            return BadRequest(result);
-
-        }
         var command = _mapper.Map<ChangePasswordCommand>(request);
         command.Email = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email).Value; //is this a safe way of extracting user email?
         var mediatrResponse = await _mediator.Send(command);
