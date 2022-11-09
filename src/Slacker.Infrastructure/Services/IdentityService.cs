@@ -1,24 +1,15 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using Slacker.Application.Interfaces;
 using Slacker.Application.Models.User;
 using Slacker.Infrastructure.ConfigOptions;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Slacker.Infrastructure.Services;
 public class IdentityService : IIdentityService
@@ -191,4 +182,20 @@ public class IdentityService : IIdentityService
         
     }
 
+    public async Task<ResetPasswordMediatrResult> ResetPasswordAsync(string newPassword, string email, string token)
+    {
+        var result = new ResetPasswordMediatrResult();
+        var user = await _userManager.FindByEmailAsync(email);
+        var resetPassword = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+        if(!resetPassword.Succeeded)
+        {
+            result.IsSuccess = false;
+            result.Errors.Add("Couln't change the password");
+            return result;
+        }
+
+        result.IsSuccess = true;
+        return result;
+    }
 }

@@ -74,14 +74,9 @@ public class AuthController : ControllerBase
         var command = _mapper.Map<LoginCommand>(login);
         var mediatrResponse = await _mediator.Send(command);
 
-        if(mediatrResponse.IsSuccess)
-        {
-            return Ok(_mapper.Map<LoginResponse>(mediatrResponse));
-        }
-        else
-        {
-            return BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse)); 
-        }
+        return mediatrResponse.IsSuccess
+            ? Ok(_mapper.Map<LoginResponse>(mediatrResponse))
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
 
     }
 
@@ -94,14 +89,10 @@ public class AuthController : ControllerBase
             Email = email
         };
         var mediatrResponse = await _mediator.Send(command);
-        if (mediatrResponse.IsSuccess)
-        {
-            return Ok("You can login now");
-        }
-        else
-        {
-            return BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
-        }
+        
+        return mediatrResponse.IsSuccess
+            ? Ok("You can login now!")
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
     [HttpPost("forgot-password")]
@@ -110,20 +101,35 @@ public class AuthController : ControllerBase
         var command = new ForgotPasswordCommand { Email = request.Email };
         var mediatrResponse = await _mediator.Send(command);
 
-        if (mediatrResponse.IsSuccess)
-        {
-            return Ok("Your email has been sent");
-        }
-        else
-        {
-            return BadRequest(mediatrResponse.Errors[0]);
-        }
+        return mediatrResponse.IsSuccess 
+            ? Ok("Your email has been sent!") 
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+
     }
 
     [HttpGet("reset-password")]
-    public async Task<IActionResult> ResetPassword(string passwordResetToken, string email)
-    
+    public async Task<IActionResult> ResetPassword(string passwordResetToken, string email)    
     {
-        return Ok();
+        return Ok(new ResetPasswordRequest { Email = email, Token = passwordResetToken});  //the email and password will be passed to the 
+    }                                                                                       //js client which will send them inside hidden fields with post request
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+
+            var result = new ErrorResponse();
+            ModelState.ToList().ForEach(error => result.Errors.Add(error.Value.ToString()));
+            return BadRequest(result);
+
+        }
+
+        var command = _mapper.Map<ResetPasswordCommand>(request);
+        var mediatrResponse = await _mediator.Send(command);
+
+        return mediatrResponse.IsSuccess 
+            ? Ok("Your password is reset!") 
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 }

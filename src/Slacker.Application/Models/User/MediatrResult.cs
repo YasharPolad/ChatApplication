@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Slacker.Application.Models.User;
-public class ConfirmEmailMediatrResult : MediatrResult
+public abstract class MediatrResult
 {
-    
+    public bool IsSuccess { get; set; }
+    public List<string> Errors { get; set; } = new List<string>();
 }

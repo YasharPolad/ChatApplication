@@ -11,11 +11,17 @@ public class UserMaps : Profile
 {
 	public UserMaps()
 	{
-		CreateMap<RegisterRequest, RegisterRequestCommand>();
-		CreateMap<RegisterMediatrResult, ErrorResponse>();
+        CreateMap<RegisterMediatrResult, ErrorResponse>();  //TODO: These all need to be one.
+        CreateMap<LoginMediatrResult, ErrorResponse>();
+		CreateMap<ForgotPasswordMediatrResult, ErrorResponse>();
+		CreateMap<ConfirmEmailMediatrResult, ErrorResponse>();
+		CreateMap<ResetPasswordMediatrResult, ErrorResponse>();
+
+        CreateMap<RegisterRequest, RegisterRequestCommand>();
 
 		CreateMap<LoginRequest, LoginCommand>();
 		CreateMap<LoginMediatrResult, LoginResponse>();
-		CreateMap<LoginMediatrResult, ErrorResponse>();
+
+		CreateMap<ResetPasswordRequest, ResetPasswordCommand>();
 	}
 }
