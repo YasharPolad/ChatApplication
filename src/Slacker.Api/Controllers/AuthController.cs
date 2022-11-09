@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -12,6 +13,7 @@ using Slacker.Application.Users.Commands;
 using Slacker.Infrastructure.Services;
 using System;
 using System.Net.Sockets;
+using System.Security.Claims;
 
 namespace Slacker.Api.Controllers;
 [Route("api/[controller]")]
@@ -95,7 +97,7 @@ public class AuthController : ControllerBase
             : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
-    [HttpPost("forgot-password")]
+    [HttpPost("forgot-password")] //should this go to a command or query?
     public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
     {
         var command = new ForgotPasswordCommand { Email = request.Email };
@@ -130,6 +132,27 @@ public class AuthController : ControllerBase
 
         return mediatrResponse.IsSuccess 
             ? Ok("Your password is reset!") 
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+    }
+
+    [Authorize]
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+
+            var result = new ErrorResponse();
+            ModelState.ToList().ForEach(error => result.Errors.Add(error.Value.ToString()));
+            return BadRequest(result);
+
+        }
+        var command = _mapper.Map<ChangePasswordCommand>(request);
+        command.Email = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email).Value; //is this a safe way of extracting user email?
+        var mediatrResponse = await _mediator.Send(command);
+
+        return mediatrResponse.IsSuccess
+            ? Ok("Your password is changed!")
             : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 }

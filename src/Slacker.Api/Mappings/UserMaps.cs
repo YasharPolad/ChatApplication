@@ -16,6 +16,7 @@ public class UserMaps : Profile
 		CreateMap<ForgotPasswordMediatrResult, ErrorResponse>();
 		CreateMap<ConfirmEmailMediatrResult, ErrorResponse>();
 		CreateMap<ResetPasswordMediatrResult, ErrorResponse>();
+		CreateMap<ChangePasswordMediatrResult, ErrorResponse>();
 
         CreateMap<RegisterRequest, RegisterRequestCommand>();
 
@@ -23,5 +24,7 @@ public class UserMaps : Profile
 		CreateMap<LoginMediatrResult, LoginResponse>();
 
 		CreateMap<ResetPasswordRequest, ResetPasswordCommand>();
+
+		CreateMap<ChangePasswordRequest, ChangePasswordCommand>();
 	}
 }
