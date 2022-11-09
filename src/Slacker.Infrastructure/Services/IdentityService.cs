@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using Slacker.Application.Interfaces;
 using Slacker.Application.Models.User;
 using Slacker.Infrastructure.ConfigOptions;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -193,10 +195,11 @@ public class IdentityService : IIdentityService
             return registerResult;
         }
 
-        string emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var confirmationLink = _linkGenerator.GetUriByAction(_httpContextAccessor.HttpContext,"ConfirmEmail", "Auth", new { token, email });
+        var response = await _emailService.SendMailAsync(email, "Email Confirmation", $"Click this link to confirm your email: {confirmationLink}");
+
         
-        registerResult.EmailConfirmationToken = emailConfirmationToken;
-        registerResult.UserEmail = user.Email;
         registerResult.IsSuccess = true;
         return registerResult;
         
