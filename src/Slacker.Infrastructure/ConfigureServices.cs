@@ -63,6 +63,8 @@ public static class ConfigureServices
             options.ApiKey = builder.Configuration["SendgridSettings:ApiKey"];
         });
         builder.Services.AddScoped<IEmailService, SendGridService>();
+
+        builder.Services.AddHttpContextAccessor();
         
         
         return builder;

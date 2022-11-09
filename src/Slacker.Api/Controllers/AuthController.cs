@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Slacker.Api.Contracts;
 using Slacker.Api.Contracts.User.Request;
 using Slacker.Api.Contracts.User.Response;
+using Slacker.Api.Filters;
 using Slacker.Application.Interfaces;
 using Slacker.Application.Users.Commands;
 using Slacker.Infrastructure.Services;
@@ -84,7 +85,7 @@ public class AuthController : ControllerBase
 
     }
 
-    [HttpGet]
+    [HttpGet("email-confirm")]
     public async Task<IActionResult> ConfirmEmail(string token, string email)
     {
         var command = new ConfirmEmailCommand
@@ -101,5 +102,28 @@ public class AuthController : ControllerBase
         {
             return BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
         }
+    }
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
+    {
+        var command = new ForgotPasswordCommand { Email = request.Email };
+        var mediatrResponse = await _mediator.Send(command);
+
+        if (mediatrResponse.IsSuccess)
+        {
+            return Ok("Your email has been sent");
+        }
+        else
+        {
+            return BadRequest(mediatrResponse.Errors[0]);
+        }
+    }
+
+    [HttpGet("reset-password")]
+    public async Task<IActionResult> ResetPassword(string passwordResetToken, string email)
+    
+    {
+        return Ok();
     }
 }
