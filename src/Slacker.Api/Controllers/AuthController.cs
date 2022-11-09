@@ -47,18 +47,13 @@ public class AuthController : ControllerBase
         var command = _mapper.Map<RegisterRequestCommand>(register);
         var mediatrResponse = await _mediator.Send(command);
 
-        if (mediatrResponse.IsSuccess) //TODO: Needs to be refactored. This shouldn't be in the controller. Should be able to resend new token
-        {
-            var token = mediatrResponse.EmailConfirmationToken;
-            var email = mediatrResponse.UserEmail;
-            var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth", new { token, email }, Request.Scheme);
-            var response = await _emailService.SendMailAsync(email, "Email Confirmation", $"Click this link to confirm your email: {confirmationLink}");
-            return Ok();
-        }
-        
-        else
-            return BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse)); //TODO: Automatically return different error responses depending on the error code
-        
+        //TODO: Needs to be refactored. This shouldn't be in the controller. Should be able to resend new token
+
+        return mediatrResponse.IsSuccess == true
+            ? Ok("Registration Successful")
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse)); //TODO: Automatically return different error responses depending on the error code
+
+
     }
 
     [HttpPost("login")]

@@ -7,7 +7,5 @@ using System.Threading.Tasks;
 namespace Slacker.Application.Models.User;
 public class RegisterMediatrResult : MediatrResult
 {
-    public string EmailConfirmationToken { get; set; }
-    public string UserEmail { get; set; }
 
 }
