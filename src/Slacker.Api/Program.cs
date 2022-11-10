@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Slacker.Api.Filters;
+using Slacker.Api.Middlewares;
 using Slacker.Application.Users.Commands;
 using Slacker.Infrastructure;
 
@@ -26,6 +27,8 @@ builder.AddInfrastructure();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+app.UseGlobalExceptionHandler();
 
 app.UseHttpsRedirection();
 
