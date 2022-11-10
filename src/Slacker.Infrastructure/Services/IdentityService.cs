@@ -177,13 +177,13 @@ public class IdentityService : IIdentityService
 
         IdentityResult result = await _userManager.CreateAsync(user, password);
 
-        if(!result.Succeeded)
+        if (!result.Succeeded)
         {
 
             registerResult.IsSuccess = false;
             registerResult.Errors = result.Errors.Select(error => error.Description).ToList();
             return registerResult;
-            
+
         }
 
         IdentityResult roleResult = await _userManager.AddToRoleAsync(user, "Default");

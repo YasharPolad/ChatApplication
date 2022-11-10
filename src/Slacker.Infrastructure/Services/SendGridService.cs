@@ -31,7 +31,7 @@ public class SendGridService : IEmailService
         var subject = heading;
         var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
         var response = await _sendgridClient.SendEmailAsync(msg);  //TODO: Maybe have an exception thrown here in case email isn't sent
-        
+
         return new EmailResponse { StatusCode = response.StatusCode.ToString(), Body = response.Body.ToString() };        
         
     }
