@@ -25,6 +25,7 @@ public static class ConfigureServices
         {
             options.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection"));
         });
+        builder.Services.AddScoped<ISlackerDbContext, SlackerDbContext>();
 
         builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
         {
@@ -65,7 +66,8 @@ public static class ConfigureServices
         builder.Services.AddScoped<IEmailService, SendGridService>();
 
         builder.Services.AddHttpContextAccessor();
-        
+
+        builder.Services.AddScoped<DatabaseSeeder>();
         
         return builder;
     }
