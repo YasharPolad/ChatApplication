@@ -26,6 +26,9 @@ builder.AddInfrastructure();
 
 var app = builder.Build();
 
+var seeder = app.Services.CreateScope().ServiceProvider.GetRequiredService<DatabaseSeeder>(); //TODO: how does this work exactly?
+await seeder.Seed();
+
 // Configure the HTTP request pipeline.
 
 app.UseGlobalExceptionHandler();

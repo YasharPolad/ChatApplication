@@ -12,8 +12,8 @@ using Slacker.Infrastructure;
 namespace Slacker.Infrastructure.Migrations
 {
     [DbContext(typeof(SlackerDbContext))]
-    [Migration("20221106195112_SeedRoles")]
-    partial class SeedRoles
+    [Migration("20221110221141_Entities")]
+    partial class Entities
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,21 @@ namespace Slacker.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("ConnectionEmployee", b =>
+                {
+                    b.Property<int>("ConnectionsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmployeesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ConnectionsId", "EmployeesId");
+
+                    b.HasIndex("EmployeesId");
+
+                    b.ToTable("ConnectionEmployee");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -49,29 +64,6 @@ namespace Slacker.Infrastructure.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "2504ea37-5161-4b81-b6cc-5ba587d770f8",
-                            ConcurrencyStamp = "178e8849-463b-49bb-9a00-1b8dded34186",
-                            Name = "Default",
-                            NormalizedName = "Default"
-                        },
-                        new
-                        {
-                            Id = "91e5cf7f-a647-4aa6-a033-eae3eea4d425",
-                            ConcurrencyStamp = "75920c4a-d6b9-46a2-9713-18aa27a7b16c",
-                            Name = "Manager",
-                            NormalizedName = "Manager"
-                        },
-                        new
-                        {
-                            Id = "23b858c7-2fdd-4100-ba81-3d1b1d01bf0a",
-                            ConcurrencyStamp = "e20c4490-95ff-4c4b-9c93-56ac4f6f3d9c",
-                            Name = "Admin",
-                            NormalizedName = "Admin"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -245,6 +237,158 @@ namespace Slacker.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Slacker.Domain.Entities.Attachment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("Attachment");
+                });
+
+            modelBuilder.Entity("Slacker.Domain.Entities.Connection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("IsChannel")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPrivate")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Connections");
+                });
+
+            modelBuilder.Entity("Slacker.Domain.Entities.Employee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("IdentityId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SigalRId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("Slacker.Domain.Entities.Post", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ConnectionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsEdited")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1500)
+                        .HasColumnType("ntext");
+
+                    b.Property<int>("ParentPostId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConnectionId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("ParentPostId");
+
+                    b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("Slacker.Domain.Entities.Reaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("Emoji")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("Reaction");
+                });
+
+            modelBuilder.Entity("ConnectionEmployee", b =>
+                {
+                    b.HasOne("Slacker.Domain.Entities.Connection", null)
+                        .WithMany()
+                        .HasForeignKey("ConnectionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Slacker.Domain.Entities.Employee", null)
+                        .WithMany()
+                        .HasForeignKey("EmployeesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -294,6 +438,74 @@ namespace Slacker.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Slacker.Domain.Entities.Attachment", b =>
+                {
+                    b.HasOne("Slacker.Domain.Entities.Post", "Post")
+                        .WithMany("Attachments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("Slacker.Domain.Entities.Post", b =>
+                {
+                    b.HasOne("Slacker.Domain.Entities.Connection", "Connection")
+                        .WithMany("Posts")
+                        .HasForeignKey("ConnectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Slacker.Domain.Entities.Employee", "Employee")
+                        .WithMany("Posts")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Slacker.Domain.Entities.Post", "ParentPost")
+                        .WithMany("ChildPosts")
+                        .HasForeignKey("ParentPostId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Connection");
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("ParentPost");
+                });
+
+            modelBuilder.Entity("Slacker.Domain.Entities.Reaction", b =>
+                {
+                    b.HasOne("Slacker.Domain.Entities.Post", "Post")
+                        .WithMany("Reactions")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("Slacker.Domain.Entities.Connection", b =>
+                {
+                    b.Navigation("Posts");
+                });
+
+            modelBuilder.Entity("Slacker.Domain.Entities.Employee", b =>
+                {
+                    b.Navigation("Posts");
+                });
+
+            modelBuilder.Entity("Slacker.Domain.Entities.Post", b =>
+                {
+                    b.Navigation("Attachments");
+
+                    b.Navigation("ChildPosts");
+
+                    b.Navigation("Reactions");
                 });
 #pragma warning restore 612, 618
         }
