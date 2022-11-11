@@ -6,7 +6,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using Slacker.Application.Interfaces;
+using Slacker.Application.Interfaces.RepositoryInterfaces;
 using Slacker.Application.Models.User;
+using Slacker.Domain.Entities;
 using Slacker.Infrastructure.ConfigOptions;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -22,10 +24,11 @@ public class IdentityService : IIdentityService
     private readonly IEmailService _emailService;
     private readonly LinkGenerator _linkGenerator;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IEmployeeRepository _employeeRepository;
 
     public IdentityService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager,
-       IOptions<JwtSettings> jwtOptions, IEmailService emailService, LinkGenerator linkGenerator, 
-       IHttpContextAccessor httpContextAccessor)
+       IOptions<JwtSettings> jwtOptions, IEmailService emailService, LinkGenerator linkGenerator,
+       IHttpContextAccessor httpContextAccessor, IEmployeeRepository employeeRepository)
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -33,6 +36,7 @@ public class IdentityService : IIdentityService
         _emailService = emailService;
         _linkGenerator = linkGenerator;
         _httpContextAccessor = httpContextAccessor;
+        _employeeRepository = employeeRepository;
     }
 
 
@@ -74,8 +78,9 @@ public class IdentityService : IIdentityService
             response.Errors.Add("The token or email is wrong");
             return response;
         }
-
+        
         response.IsSuccess = true;
+        await _employeeRepository.CreateAsync(new Employee { IdentityId = user.Id }); //TODO: Create Employee automatically. But there must be a better way
         return response;
 
     }

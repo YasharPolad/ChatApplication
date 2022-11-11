@@ -20,6 +20,6 @@ internal class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailCommand,
 
     public async Task<ConfirmEmailMediatrResult> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
     {
-        return await _identity.ConfirmEmailAsync(request.Token, request.Email);
+        return await _identity.ConfirmEmailAsync(request.Token, request.Email);      
     }
 }
