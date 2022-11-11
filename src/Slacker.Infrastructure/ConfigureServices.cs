@@ -7,7 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using SendGrid.Extensions.DependencyInjection;
 using Slacker.Application.Interfaces;
+using Slacker.Application.Interfaces.RepositoryInterfaces;
 using Slacker.Infrastructure.ConfigOptions;
+using Slacker.Infrastructure.Repositories;
 using Slacker.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
@@ -26,6 +28,12 @@ public static class ConfigureServices
             options.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection"));
         });
         builder.Services.AddScoped<ISlackerDbContext, SlackerDbContext>();
+
+        //Repositories
+        builder.Services.AddScoped<IConnectionRepository, ConnectionRepository>(); //TODO: Maybe move all repositories to another file
+
+
+
 
         builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
         {

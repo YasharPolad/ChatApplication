@@ -11,6 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Connections\QueryHandlers\" />
+    <Folder Include="Connections\Queries\" />
     <Folder Include="Users\QueryHandlers\" />
     <Folder Include="Users\Queries\" />
   </ItemGroup>

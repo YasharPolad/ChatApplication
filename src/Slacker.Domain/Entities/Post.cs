@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 namespace Slacker.Domain.Entities;
 public class Post : Entity
 {
+    public Post()
+    {
+        ChildPosts = new List<Post>();
+        Attachments = new List<Attachment>();
+        Reactions = new List<Reaction>();
+    }
     public int ConnectionId { get; set; }
     public int EmployeeId { get; set; }
     public string Message { get; set; }
