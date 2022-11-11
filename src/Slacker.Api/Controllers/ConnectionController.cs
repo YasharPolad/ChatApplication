@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Slacker.Api.Contracts;
 using Slacker.Api.Contracts.Connection;
 using Slacker.Application.Connections.Commands;
+using System.Security.Claims;
 
 namespace Slacker.Api.Controllers;
 [Route("api/[controller]")]
@@ -21,6 +22,7 @@ public class ConnectionController : BaseController
     public async Task<IActionResult> CreateConnection(CreateConnection request)
     {
         var command = _mapper.Map<CreateConnectionCommand>(request);
+        command.CreatingUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var mediatrResponse = await _mediator.Send(command);
 
         return mediatrResponse.IsSuccess == true

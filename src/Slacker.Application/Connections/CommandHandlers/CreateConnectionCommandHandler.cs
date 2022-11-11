@@ -10,12 +10,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Slacker.Application.Connections.CommandHandlers;
-internal class CreateConnectionCommandHandler : IRequestHandler<CreateConnectionCommand, MediatrResult<Connection>>
+public class CreateConnectionCommandHandler : IRequestHandler<CreateConnectionCommand, MediatrResult<Connection>>
 {
     private readonly IConnectionRepository _repository;
-    public CreateConnectionCommandHandler(IConnectionRepository repository)
+    private readonly IEmployeeRepository _employeeRepository;
+    public CreateConnectionCommandHandler(IConnectionRepository repository, IEmployeeRepository employeeRepository)
     {
         _repository = repository;
+        _employeeRepository = employeeRepository;
     }
 
     public async Task<MediatrResult<Connection>> Handle(CreateConnectionCommand request, CancellationToken cancellationToken)
@@ -25,8 +27,11 @@ internal class CreateConnectionCommandHandler : IRequestHandler<CreateConnection
         {
             Name = request.Name,
             IsChannel = request.IsChannel,
-            IsPrivate = request.IsPrivate  //TODO: Add the creator employee to the employees list
+            IsPrivate = request.IsPrivate  
         };
+
+        var currentEmployee = await _employeeRepository.GetAsync(e => e.IdentityId == request.CreatingUserId);
+        connection.Employees.Add(currentEmployee); 
 
         await _repository.CreateAsync(connection); //If there is an exception it will be caught by the global exception handler. 
         

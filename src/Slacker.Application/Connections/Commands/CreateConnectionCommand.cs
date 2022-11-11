@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace Slacker.Application.Connections.Commands;
 public class CreateConnectionCommand : IRequest<MediatrResult<Connection>>
 {
+    public string CreatingUserId { get; set; }
     public string Name { get; set; }
     public bool IsChannel { get; set; }
     public bool IsPrivate { get; set; }
