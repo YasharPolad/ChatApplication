@@ -18,17 +18,10 @@ using System.Security.Claims;
 namespace Slacker.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController : ControllerBase
+public class AuthController : BaseController
 {
-    private readonly IMapper _mapper;
-    private readonly IMediator _mediator;
-    private readonly IEmailService _emailService;
-
-    public AuthController(IMapper mapper, IMediator mediator, IEmailService emailService)
+    public AuthController(IMapper mapper, IMediator mediator) : base(mapper, mediator)
     {
-        _mapper = mapper;
-        _mediator = mediator;
-        _emailService = emailService;
     }
 
     [HttpPost("register")]
