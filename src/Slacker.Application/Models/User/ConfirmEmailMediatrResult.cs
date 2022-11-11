@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 namespace Slacker.Application.Models.User;
 public class ConfirmEmailMediatrResult : MediatrResult
 {
-    
+
 }
