@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Slacker.Application.Models.User;
-public class ForgotPasswordMediatrResult : AbstractMediatrResult
+public class ForgotPasswordMediatrResult : BaseMediatrResult
 {
     
 }

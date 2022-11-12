@@ -43,4 +43,29 @@ public class ConnectionController : BaseController
             : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
 
     }
+    
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteConnection(int id) //TODO: Who can delete a connection?
+    {
+        var command = new DeleteConnectionCommand { Id = id };
+        var mediatrResponse = await _mediator.Send(command);
+
+        return mediatrResponse.IsSuccess == true
+            ? Ok($"Connection with ID number {id} has been deleted")
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+    }
+
+    [HttpPut("{id}")]
+    [Authorize]
+    public async Task<IActionResult> UpdateConnection(int id, [FromBody] UpdateConnection request)
+    {
+        var command = _mapper.Map<UpdateConnectionCommand>(request);
+        command.ConnectionId = id;
+        var mediatrResponse = await _mediator.Send(command);
+
+        return mediatrResponse.IsSuccess == true
+            ? Ok($"Connection with ID number {id} has been updated")
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+    }
 }

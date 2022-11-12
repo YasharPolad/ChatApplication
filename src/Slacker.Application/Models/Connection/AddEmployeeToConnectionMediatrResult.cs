@@ -5,6 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Slacker.Application.Models.Connection;
-public class AddEmployeeToConnectionMediatrResult : AbstractMediatrResult
+public class AddEmployeeToConnectionMediatrResult : BaseMediatrResult
 {
 }

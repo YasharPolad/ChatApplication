@@ -13,10 +13,14 @@ public class ConnectionMappings : Profile
 {
 	public ConnectionMappings()
 	{
-		CreateMap<CreateConnection, CreateConnectionCommand>();
 		CreateMap<MediatrResult<Connection>, ErrorResponse>();
 		CreateMap<AddEmployeeToConnectionMediatrResult, ErrorResponse>();
-		CreateMap<Connection, ConnectionResponse>();
+		CreateMap<DeleteConnectionMediatrResult, ErrorResponse>();
+		CreateMap<BaseMediatrResult, ErrorResponse>();
+
+        CreateMap<CreateConnection, CreateConnectionCommand>();
+        CreateMap<Connection, ConnectionResponse>();
 		CreateMap<AddEmployeeToConnection, AddEmployeeToConnectionCommand>();
+		CreateMap<UpdateConnection, UpdateConnectionCommand>();
 	}
 }

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Slacker.Domain.Entities;
-public class Connection : Entity
+public class Connection : Entity //TODO: Add Fluent Api validation for all entities
 {
     public Connection()
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Slacker.Application.Models.User;
-public class LoginMediatrResult : AbstractMediatrResult
+public class LoginMediatrResult : BaseMediatrResult
 {
     public string? Token { get; set; }
     public DateTime? ExpirationDate { get; set; }
