@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Slacker.Api.Contracts.Connection;
+namespace Slacker.Api.Contracts.Connection.Requests;
 
 public class CreateConnection
 {

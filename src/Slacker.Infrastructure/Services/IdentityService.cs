@@ -144,6 +144,7 @@ public class IdentityService : IIdentityService
         List<Claim> Claims = new List<Claim>
         {
             new Claim(ClaimTypes.Email, email),
+            new Claim(ClaimTypes.NameIdentifier, loginUser.Id),
         };
 
         var userRoles = await _userManager.GetRolesAsync(loginUser);
