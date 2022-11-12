@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Slacker.Application.Models.User;
-public class ChangePasswordMediatrResult : AbstractMediatrResult
+namespace Slacker.Application.Models.Connection;
+public class AddEmployeeToConnectionMediatrResult : AbstractMediatrResult
 {
 }

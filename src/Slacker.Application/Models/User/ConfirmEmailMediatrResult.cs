@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Slacker.Application.Models.User;
-public class ConfirmEmailMediatrResult : MediatrResult
+public class ConfirmEmailMediatrResult : AbstractMediatrResult
 {
 
 }

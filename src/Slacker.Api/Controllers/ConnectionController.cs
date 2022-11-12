@@ -30,4 +30,17 @@ public class ConnectionController : BaseController
             ? Ok(_mapper.Map<ConnectionResponse>(mediatrResponse.Payload))
             : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse)); 
     }
+
+    [HttpPut]
+    [Authorize]
+    public async Task<IActionResult> AddEmployeeToConnection(AddEmployeeToConnection request)
+    {
+        var command = _mapper.Map<AddEmployeeToConnectionCommand>(request);
+        var mediatrResponse = await _mediator.Send(command);
+
+        return mediatrResponse.IsSuccess == true
+            ? Ok($"Employee with Id {request.EmployeeId} was added to connection {request.ConnectionId}")
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+
+    }
 }
