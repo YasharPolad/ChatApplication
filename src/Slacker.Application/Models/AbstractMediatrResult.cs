@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Slacker.Application.Models.User;
-public abstract class MediatrResult
+namespace Slacker.Application.Models;
+public abstract class AbstractMediatrResult
 {
     public bool IsSuccess { get; set; }
     public List<string> Errors { get; set; } = new List<string>();

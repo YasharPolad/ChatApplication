@@ -33,7 +33,7 @@ public class CreateConnectionCommandHandler : IRequestHandler<CreateConnectionCo
         var currentEmployee = await _employeeRepository.GetAsync(e => e.IdentityId == request.CreatingUserId);
         connection.Employees.Add(currentEmployee); 
 
-        await _repository.CreateAsync(connection); //If there is an exception it will be caught by the global exception handler. 
+        await _repository.CreateAsync(connection); 
         
         result.Payload = connection;
         result.IsSuccess = true;
