@@ -7,6 +7,7 @@ using Slacker.Api.Contracts;
 using Slacker.Api.Contracts.Connection.Requests;
 using Slacker.Api.Contracts.Connection.Responses;
 using Slacker.Application.Connections.Commands;
+using Slacker.Application.Connections.Queries;
 using System.Security.Claims;
 
 namespace Slacker.Api.Controllers;
@@ -66,6 +67,30 @@ public class ConnectionController : BaseController
 
         return mediatrResponse.IsSuccess == true
             ? Ok($"Connection with ID number {id} has been updated")
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetChannelsByEmployee(int employeeId)
+    {
+        var query = new GetChannelsByEmployeeQuery { EmployeeId = employeeId };
+        var mediatrResponse = await _mediator.Send(query);
+
+        return mediatrResponse.IsSuccess == true
+            ? Ok(_mapper.Map<List<ConnectionResponse>>(mediatrResponse.Payload))  //TODO: LEARN MAPPING WELL
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+    }
+
+    [HttpGet("messages")]
+    [Authorize]
+    public async Task<IActionResult> GetDirectMessagesByEmployee(int employeeId)
+    {
+        var query = new GetDirectMessagesByEmployeeQuery { EmployeeId = employeeId };
+        var mediatrResponse = await _mediator.Send(query);
+
+        return mediatrResponse.IsSuccess == true
+            ? Ok(_mapper.Map<List<ConnectionResponse>>(mediatrResponse.Payload))  //TODO: LEARN MAPPING WELL
             : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 }
