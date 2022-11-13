@@ -44,7 +44,7 @@ public class AuthController : BaseController
         var mediatrResponse = await _mediator.Send(command);
 
         return mediatrResponse.IsSuccess
-            ? Ok(_mapper.Map<LoginResponse>(mediatrResponse))
+            ? Ok(_mapper.Map<LoginResponse>(mediatrResponse.Payload))
             : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
 
     }

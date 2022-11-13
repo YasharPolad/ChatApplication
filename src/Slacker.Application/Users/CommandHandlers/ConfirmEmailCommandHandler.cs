@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Slacker.Application.Interfaces;
-using Slacker.Application.Models.User;
+using Slacker.Application.Models;
 using Slacker.Application.Users.Commands;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Slacker.Application.Users.CommandHandlers;
-internal class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailCommand, ConfirmEmailMediatrResult>
+internal class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailCommand, BaseMediatrResult>
 {
     private readonly IIdentityService _identity;
 
@@ -18,7 +18,7 @@ internal class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailCommand,
         _identity = identity;
     }
 
-    public async Task<ConfirmEmailMediatrResult> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
+    public async Task<BaseMediatrResult> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
     {
         return await _identity.ConfirmEmailAsync(request.Token, request.Email);      
     }

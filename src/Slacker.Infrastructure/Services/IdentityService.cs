@@ -7,7 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using Slacker.Application.Interfaces;
 using Slacker.Application.Interfaces.RepositoryInterfaces;
-using Slacker.Application.Models.User;
+using Slacker.Application.Models;
+using Slacker.Application.Models.DTOs;
 using Slacker.Domain.Entities;
 using Slacker.Infrastructure.ConfigOptions;
 using System;
@@ -41,9 +42,9 @@ public class IdentityService : IIdentityService
 
 
 
-    public async Task<ChangePasswordMediatrResult> ChangePassword(string oldPassword, string newPassword, string email)
+    public async Task<BaseMediatrResult> ChangePassword(string oldPassword, string newPassword, string email)
     {
-        var response = new ChangePasswordMediatrResult();
+        var response = new BaseMediatrResult();
         var user = await _userManager.FindByEmailAsync(email); //im not going to validate this because the email comes from an authorized user
         var changePassword = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
 
@@ -59,9 +60,9 @@ public class IdentityService : IIdentityService
 
     }
 
-    public async Task<ConfirmEmailMediatrResult> ConfirmEmailAsync(string token, string email)
+    public async Task<BaseMediatrResult> ConfirmEmailAsync(string token, string email)
     {
-        var response = new ConfirmEmailMediatrResult();
+        var response = new BaseMediatrResult();
         var user = await _userManager.FindByEmailAsync(email);
 
         if(user is null)
@@ -85,9 +86,9 @@ public class IdentityService : IIdentityService
 
     }
 
-    public async Task<ForgotPasswordMediatrResult> ForgotPasswordAsync(string email)
+    public async Task<BaseMediatrResult> ForgotPasswordAsync(string email)
     {
-        var result = new ForgotPasswordMediatrResult();
+        var result = new BaseMediatrResult();
         var user = await _userManager.FindByEmailAsync(email);
 
         if (user is null)
@@ -112,9 +113,9 @@ public class IdentityService : IIdentityService
         return result;
     }
 
-    public async Task<LoginMediatrResult> LoginUserAsync(string email, string password)
+    public async Task<MediatrResult<LoginResponseDto>> LoginUserAsync(string email, string password)
     {
-        var result = new LoginMediatrResult();
+        var result = new MediatrResult<LoginResponseDto>();
         var loginUser = await _userManager.FindByEmailAsync(email);
 
 
@@ -165,15 +166,14 @@ public class IdentityService : IIdentityService
         string tokenAsString = new JwtSecurityTokenHandler().WriteToken(token);
 
         result.IsSuccess = true;
-        result.Token = tokenAsString;
-        result.ExpirationDate = token.ValidTo;
+        result.Payload = new LoginResponseDto { Token = tokenAsString, ExpirationDate = token.ValidTo };
         return result;
 
     }
 
-    public async Task<RegisterMediatrResult> RegisterUserAsync(string email, string password, string phoneNumber)
+    public async Task<BaseMediatrResult> RegisterUserAsync(string email, string password, string phoneNumber)
     {
-        var registerResult = new RegisterMediatrResult();
+        var registerResult = new BaseMediatrResult();
         var user = new IdentityUser
         {
             Email = email,
@@ -211,9 +211,9 @@ public class IdentityService : IIdentityService
         
     }
 
-    public async Task<ResetPasswordMediatrResult> ResetPasswordAsync(string newPassword, string email, string token)
+    public async Task<BaseMediatrResult> ResetPasswordAsync(string newPassword, string email, string token)
     {
-        var result = new ResetPasswordMediatrResult();
+        var result = new BaseMediatrResult();
         var user = await _userManager.FindByEmailAsync(email);
         var resetPassword = await _userManager.ResetPasswordAsync(user, token, newPassword);
 

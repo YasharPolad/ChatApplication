@@ -31,7 +31,7 @@ public GetChannelsByEmployeeQueryHandler(ISlackerDbContext context)
         if(employee is null)  //Not necessary to check this, can return empty list instead. But checking is better I think.
         {
             result.IsSuccess = false;
-            result.ErrorMessages.Add("This employee doesn't exist");
+            result.Errors.Add("This employee doesn't exist");
             return result;
         }
 

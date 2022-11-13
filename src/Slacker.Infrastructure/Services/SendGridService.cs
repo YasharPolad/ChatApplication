@@ -24,7 +24,7 @@ public class SendGridService : IEmailService
 
     public async Task<EmailResponse> SendMailAsync(string recipient, string heading, string body)
     {
-        var from = new EmailAddress(_configuration["SendgridSettings:Sender"]); //TODO: Refactor this. Somehow need to be able to send a confirmation email without inputting subject and body. Maybe make this class abstract and inherit from it.
+        var from = new EmailAddress(_configuration["SendgridSettings:Sender"]); 
         var to = new EmailAddress(recipient);
         var plainTextContent = body;
         var htmlContent = body;
