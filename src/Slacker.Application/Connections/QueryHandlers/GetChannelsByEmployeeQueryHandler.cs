@@ -25,6 +25,7 @@ public GetChannelsByEmployeeQueryHandler(ISlackerDbContext context)
 
         var employee = _context.Employees
             .Include(e => e.Connections)
+                .ThenInclude(c => c.Employees)  //Because I want to show the employees of each connection in the response
             .FirstOrDefault(e => e.Id == request.EmployeeId);
         
         if(employee is null)  //Not necessary to check this, can return empty list instead. But checking is better I think.
