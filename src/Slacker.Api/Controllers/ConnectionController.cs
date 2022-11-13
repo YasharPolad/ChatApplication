@@ -78,7 +78,7 @@ public class ConnectionController : BaseController
         var mediatrResponse = await _mediator.Send(query);
 
         return mediatrResponse.IsSuccess == true
-            ? Ok(_mapper.Map<List<ConnectionResponse>>(mediatrResponse.Payload))  //TODO: LEARN MAPPING WELL
+            ? Ok(_mapper.Map<List<ConnectionResponse>>(mediatrResponse.Payload))  
             : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
@@ -90,7 +90,7 @@ public class ConnectionController : BaseController
         var mediatrResponse = await _mediator.Send(query);
 
         return mediatrResponse.IsSuccess == true
-            ? Ok(_mapper.Map<List<ConnectionResponse>>(mediatrResponse.Payload))  //TODO: LEARN MAPPING WELL
+            ? Ok(_mapper.Map<List<ConnectionResponse>>(mediatrResponse.Payload)) 
             : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 }
