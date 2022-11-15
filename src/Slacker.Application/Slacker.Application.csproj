@@ -13,6 +13,8 @@
   <ItemGroup>
     <Folder Include="Models\Connection\" />
     <Folder Include="Models\User\" />
+    <Folder Include="Posts\QueryHandlers\" />
+    <Folder Include="Posts\Queries\" />
     <Folder Include="Users\QueryHandlers\" />
     <Folder Include="Users\Queries\" />
   </ItemGroup>

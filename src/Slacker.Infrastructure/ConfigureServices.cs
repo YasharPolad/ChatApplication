@@ -33,7 +33,7 @@ public static class ConfigureServices
         //Repositories
         builder.Services.AddScoped<IConnectionRepository, ConnectionRepository>(); //TODO: Maybe move all repositories to another file
         builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-
+        builder.Services.AddScoped<IPostRepository, PostRepository>();
 
 
         builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
