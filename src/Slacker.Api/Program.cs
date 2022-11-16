@@ -1,9 +1,12 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Slacker.Api.Authorization;
 using Slacker.Api.Filters;
 using Slacker.Api.Middlewares;
 using Slacker.Application.Users.Commands;
 using Slacker.Infrastructure;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +26,16 @@ builder.Services.AddMediatR(typeof(Program), typeof(RegisterRequestCommand));
 builder.Services.AddLogging();
 
 builder.AddInfrastructure();
+
+builder.Services.AddScoped<IAuthorizationHandler, PostModifyRequirementHandler>();
+
+builder.Services.AddAuthorization(configure =>
+{
+    configure.AddPolicy("OnlyPostCreatorCanEdit", policy => policy
+            .Requirements.Add(new PostModifyRequirement()));
+});
+
+
 
 var app = builder.Build();
 

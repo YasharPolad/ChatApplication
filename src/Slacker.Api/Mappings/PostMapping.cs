@@ -12,5 +12,6 @@ public class PostMapping : Profile
 	{
 		CreateMap<CreatePost, CreatePostCommand>();
 		CreateMap<Post, CreatePostResponse>();
+		CreateMap<UpdatePost, UpdatePostCommand>();
 	}
 }
