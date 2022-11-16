@@ -45,4 +45,16 @@ public class MessagingController : BaseController
             : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
+    [HttpDelete("{id}")]
+    [Authorize(policy: "OnlyPostCreatorCanEdit")]
+    public async Task<IActionResult> DeletePost(int id)
+    {
+        var command = new DeletePostCommand { Id = id };
+        var mediatrResponse = await _mediator.Send(command);
+
+        return mediatrResponse.IsSuccess == true
+            ? Ok("Post is deleted")
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+    }
+
 }

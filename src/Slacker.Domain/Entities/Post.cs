@@ -20,6 +20,7 @@ public class Post : Entity
     public int? ParentPostId { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool IsEdited { get; set; }
+    public bool isActive { get; set; } = true;
 
     public Connection Connection { get; set; }
     public Employee Employee { get; set; }
