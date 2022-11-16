@@ -9,6 +9,9 @@ using Slacker.Api.Contracts.Posts.Request;
 using Slacker.Application.Posts.Commands;
 using System.Security.Claims;
 using Slacker.Api.Contracts.Posts.Response;
+using Slacker.Application.Posts.Queries;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Slacker.Api.Controllers;
 [Route("api/[controller]")]
@@ -21,7 +24,7 @@ public class MessagingController : BaseController
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreatePost([FromForm]CreatePost request)
+    public async Task<IActionResult> CreatePost([FromForm]CreatePost request) //TODO: Maybe need a seperate controller for replies. A reply should be able to assign a connection to itself
     {
         var command = _mapper.Map<CreatePostCommand>(request);
         command.CreatingUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -56,5 +59,31 @@ public class MessagingController : BaseController
             ? Ok("Post is deleted")
             : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
+
+    [HttpGet("posts")]
+    [Authorize]
+    public async Task<IActionResult> GetPostsByConnection(GetPostsByConnection request)
+    {
+        var query = _mapper.Map<GetPostsByConnectionQuery>(request);
+        var mediatrResponse = await _mediator.Send(query);
+
+        return mediatrResponse.IsSuccess == true
+            ? Ok(_mapper.Map<List<GetPostResponse>>(mediatrResponse.Payload))
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+    }
+
+    [HttpGet("replies")]
+    [Authorize]
+    public async Task<IActionResult> GetRepliesByPost(GetRepliesByPost request)
+    {
+        var query = _mapper.Map<GetRepliesByPostQuery>(request);
+        var mediatrResponse = await _mediator.Send(query);
+
+        return mediatrResponse.IsSuccess == true
+            ? Ok(_mapper.Map<List<GetReplyResponse>>(mediatrResponse.Payload))
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+    }
+
+    //TODO: Implement add/remove reaction to post
 
 }

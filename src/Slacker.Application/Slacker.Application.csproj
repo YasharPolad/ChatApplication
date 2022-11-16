@@ -20,8 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Posts\QueryHandlers\" />
-    <Folder Include="Posts\Queries\" />
     <Folder Include="Users\QueryHandlers\" />
     <Folder Include="Users\Queries\" />
   </ItemGroup>
