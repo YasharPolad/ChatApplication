@@ -33,6 +33,8 @@ await seeder.Seed();
 
 app.UseGlobalExceptionHandler();
 
+app.UseStaticFiles();
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

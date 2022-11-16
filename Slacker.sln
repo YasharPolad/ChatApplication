@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slacker.Domain", "src\Slacker.Domain\Slacker.Domain.csproj", "{55A66FF1-70AD-434F-8E51-501895CD5818}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slacker.Domain", "src\Slacker.Domain\Slacker.Domain.csproj", "{55A66FF1-70AD-434F-8E51-501895CD5818}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D5B4C5E5-A497-4072-9845-41EFA0E69B18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slacker.Application", "src\Slacker.Application\Slacker.Application.csproj", "{ADE4FF7E-8A4D-46CC-B645-C2626CE12B73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slacker.Application", "src\Slacker.Application\Slacker.Application.csproj", "{ADE4FF7E-8A4D-46CC-B645-C2626CE12B73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slacker.Infrastructure", "src\Slacker.Infrastructure\Slacker.Infrastructure.csproj", "{843C97FC-CCEA-4025-8E55-7CFAD13B3DE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slacker.Infrastructure", "src\Slacker.Infrastructure\Slacker.Infrastructure.csproj", "{843C97FC-CCEA-4025-8E55-7CFAD13B3DE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slacker.Api", "src\Slacker.Api\Slacker.Api.csproj", "{839C65BD-F98E-44AB-BAF1-6B15DB203CC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slacker.Api", "src\Slacker.Api\Slacker.Api.csproj", "{839C65BD-F98E-44AB-BAF1-6B15DB203CC7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3ACE1493-8FDC-4688-BFA8-E93574340F39}"
 EndProject

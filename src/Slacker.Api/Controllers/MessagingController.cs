@@ -8,6 +8,7 @@ using Slacker.Api.Contracts;
 using Slacker.Api.Contracts.Posts.Request;
 using Slacker.Application.Posts.Commands;
 using System.Security.Claims;
+using Slacker.Api.Contracts.Posts.Response;
 
 namespace Slacker.Api.Controllers;
 [Route("api/[controller]")]
@@ -20,14 +21,15 @@ public class MessagingController : BaseController
 
     [HttpPost("create-post")]
     [Authorize]
-    public async Task<IActionResult> CreatePost(CreatePost request, IFormFile file)
+    public async Task<IActionResult> CreatePost([FromForm]CreatePost request)
     {
         var command = _mapper.Map<CreatePostCommand>(request);
         command.CreatingUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var mediatrResponse = await _mediator.Send(command);
 
         return mediatrResponse.IsSuccess == true
-            ? Ok("Post is created!")
+            ? Ok(_mapper.Map<CreatePostResponse>(mediatrResponse.Payload))     
             : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
+
 }
