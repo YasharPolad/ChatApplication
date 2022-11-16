@@ -19,7 +19,7 @@ public class MessagingController : BaseController
     {
     }
 
-    [HttpPost("create-post")]
+    [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreatePost([FromForm]CreatePost request)
     {
@@ -29,6 +29,19 @@ public class MessagingController : BaseController
 
         return mediatrResponse.IsSuccess == true
             ? Ok(_mapper.Map<CreatePostResponse>(mediatrResponse.Payload))     
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+    }
+
+    [HttpPut("{id}")]
+    [Authorize(policy: "OnlyPostCreatorCanEdit")]
+    public async Task<IActionResult> EditPost(int id, [FromBody] UpdatePost request)
+    {
+        var command = _mapper.Map<UpdatePostCommand>(request);
+        command.postId = id;
+        var mediatrResponse = await _mediator.Send(command);
+
+        return mediatrResponse.IsSuccess == true
+            ? Ok("Post is updated")
             : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
