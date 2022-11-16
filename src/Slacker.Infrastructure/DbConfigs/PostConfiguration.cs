@@ -17,6 +17,7 @@ public class PostConfiguration : IEntityTypeConfiguration<Post>
         builder.Property(p => p.CreatedAt).HasColumnType("datetime2");
 
         //Entity
+        builder.HasQueryFilter(p => p.isActive == true);
         builder.HasKey(p => p.Id);
         builder.HasOne(p => p.Connection).WithMany(c => c.Posts).HasForeignKey(p => p.ConnectionId);
         builder.HasOne(p => p.Employee).WithMany(p => p.Posts).HasForeignKey(p => p.EmployeeId);
