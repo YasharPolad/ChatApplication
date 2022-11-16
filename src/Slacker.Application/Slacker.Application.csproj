@@ -7,12 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Connection\**" />
+    <Compile Remove="Models\User\**" />
+    <EmbeddedResource Remove="Models\Connection\**" />
+    <EmbeddedResource Remove="Models\User\**" />
+    <None Remove="Models\Connection\**" />
+    <None Remove="Models\User\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Slacker.Domain\Slacker.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Connection\" />
-    <Folder Include="Models\User\" />
     <Folder Include="Posts\QueryHandlers\" />
     <Folder Include="Posts\Queries\" />
     <Folder Include="Users\QueryHandlers\" />
@@ -21,6 +28,7 @@
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="11.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.10" />
   </ItemGroup>
 

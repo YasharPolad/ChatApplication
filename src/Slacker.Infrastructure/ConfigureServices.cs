@@ -78,6 +78,8 @@ public static class ConfigureServices
         builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
         builder.Services.AddScoped<DatabaseSeeder>();
+
+        builder.Services.AddScoped<IFileHandlerService, FileHandlerService>();
         
         return builder;
     }
