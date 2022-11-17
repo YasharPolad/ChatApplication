@@ -12,10 +12,12 @@ public class PostMapping : Profile
 	public PostMapping()
 	{
 		CreateMap<CreatePost, CreatePostCommand>();
+		CreateMap<Attachment, AttachmentDto>(); //TODO: Maybe have only relative paths in attachment dto?
 		CreateMap<Post, CreatePostResponse>();
 		CreateMap<UpdatePost, UpdatePostCommand>();
 		CreateMap<GetPostsByConnection, GetPostsByConnectionQuery>();
 		CreateMap<GetRepliesByPost, GetRepliesByPostQuery>();
+		CreateMap<GetAttachment, GetAttachmentQuery>();
 
 		CreateMap<Post, GetPostResponse>()
 			.ForMember(dest => dest.ReactionCount, options => options.MapFrom(src => src.Reactions.Count))

@@ -15,6 +15,6 @@ public class CreatePostCommand : IRequest<MediatrResult<Post>>
     public int ConnectionId { get; set; }
     public string Message { get; set; }
     public string CreatingUserId { get; set; }
-    public IFormFile? File { get; set; }
+    public List<IFormFile>? Files { get; set; }
     public int? ParentPost { get; set; }
 }

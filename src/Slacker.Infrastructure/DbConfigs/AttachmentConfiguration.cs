@@ -13,7 +13,7 @@ public class AttachmentConfiguration : IEntityTypeConfiguration<Attachment>
     public void Configure(EntityTypeBuilder<Attachment> builder)
     {
         //Property
-        builder.Property(a => a.FileName).HasMaxLength(250);
+        //builder.Property(a => a.FileName).HasMaxLength(250);
 
         //Entity
         builder.HasKey(a => a.Id);

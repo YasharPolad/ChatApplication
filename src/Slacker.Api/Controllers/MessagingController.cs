@@ -84,6 +84,18 @@ public class MessagingController : BaseController
             : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
+    [HttpGet("download-file")]
+    [Authorize]
+    public async Task<IActionResult> DownloadFile(GetAttachment request)
+    {
+        var query = _mapper.Map<GetAttachmentQuery>(request);
+        var mediatrResponse = await _mediator.Send(query);
+
+        return mediatrResponse.IsSuccess == true
+            ? File(mediatrResponse.Payload.FileStream, mediatrResponse.Payload.ContentType)
+            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+    }
+
     //TODO: Implement add/remove reaction to post
 
 }
