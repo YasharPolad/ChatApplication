@@ -40,20 +40,23 @@ internal class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, Med
             ParentPostId = request.ParentPost
         };
 
-        if(request.File != null)
+        if(request.Files != null)  //TODO: This block looks ugly
         {
-            var filePath = await _fileHandlerService.SaveFile(request.File);
-            if (filePath != null)
+            foreach(var file in request.Files)
             {
-                newPost.Attachments.Add(
-                    new Attachment
-                    {
-                        FileName = Path.GetFileName(filePath),
-                        Post = newPost,
-                        Type = 1, //TODO: DO SOMETHING ABOUT FILE TYPES
-                    }
-                );
+                var filePath = await _fileHandlerService.SaveFile(file);
+                if (filePath != null)
+                {
+                    newPost.Attachments.Add(
+                        new Attachment
+                        {
+                            FilePath = filePath,
+                            Post = newPost,
+                        }
+                    );
+                }
             }
+            
         }
 
         await _postRepository.CreateAsync(newPost); //TODO: Maybe I should have custom exceptions for create method, cause it doesn't return a result object, by which I could check whether the operation was successful

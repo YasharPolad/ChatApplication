@@ -8,6 +8,6 @@ public class CreatePost
     public int ConnectionId { get; set; }
     [StringLength(1500)]
     public string Message { get; set; }
-    public IFormFile? File { get; set; }
+    public List<IFormFile>? Files { get; set; }
     public int? ParentPost { get; set; }
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using SendGrid;
 using Slacker.Application.Interfaces;
+using Slacker.Application.Models.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,17 @@ public class FileHandlerService : IFileHandlerService
         _env = env;
     }
 
+    public FileDto GetFile(string path)
+    {
+        var result = new FileDto();
+        
+        var filename = Path.GetFileName(path);
+        result.FileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        result.ContentType = GetMimeType(filename);
+       
+        return result;
+    }
+
     public async Task<string> SaveFile(IFormFile file)
     {
         try
@@ -30,7 +42,8 @@ public class FileHandlerService : IFileHandlerService
                 var baseDirectory = Path.Combine(_env.WebRootPath, "Uploads"); //TODO: Maybe user files should be stored outside of the project
                 Directory.CreateDirectory(baseDirectory);
 
-                var subdirectory = DirectoryFromMimeType(file.FileName);
+                var mimeType = GetMimeType(file.FileName);
+                var subdirectory = DirectoryFromMimeType(mimeType);
                 var fileDirectory = Path.Combine(baseDirectory, subdirectory); 
                 Directory.CreateDirectory(fileDirectory);
                 
@@ -54,16 +67,21 @@ public class FileHandlerService : IFileHandlerService
     }
 
     //For example if the file is .png, it should be saved under Uploads/image/png 
-    private string DirectoryFromMimeType(string fileName)
+    private string DirectoryFromMimeType(string mimeType)
     {
-        var typeProvider = new FileExtensionContentTypeProvider(); //TODO: I shouldn't new this here 
-        
-        if (!typeProvider.TryGetContentType(fileName, out var contentType))
+        if (mimeType == "application/octet-stream")
             return "unknown-type";
         
-        var mimeArray = contentType.Split("/");
+        var mimeArray = mimeType.Split("/");
         return Path.Combine(mimeArray[0], mimeArray[1]);
     }
 
+    private string GetMimeType(string fileName)
+    {
+        var typeProvider = new FileExtensionContentTypeProvider();
+        if (!typeProvider.TryGetContentType(fileName, out var contentType))
+            return "application/octet-stream";
+        return contentType;
+    }
    
 }
