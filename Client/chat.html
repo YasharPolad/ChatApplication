@@ -9,6 +9,9 @@
 </head>
 <body>
 
+    Connection Id
+    <input type="number" id="connectionId">
+    Message
     <input type="text" id="inputMessage">
     <button type="submit" id="sendButton">Send</button>
 
@@ -21,8 +24,9 @@
     <script>
         const inputBox = document.getElementById("inputMessage");
         const messageBox = document.getElementById("messages");
+        const channel = document.getElementById("connectionId");
         const sendButton = document.getElementById("sendButton");
-        var loginToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ5YXNoYXIueGFzcG9sYWRvdkBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImFmZGJiZGYwLWZmMjItNDEyYi1hYTI0LTA3ZTBhM2QwZjcxZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkRlZmF1bHQiLCJleHAiOjE2Njg5MzEyMDAsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTI4MSIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTI4MSJ9.85dOBoyKiYi5CeqLb_m5F7ZUzEf0h5OsHGB7Ywsbr_U"
+        var loginToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ5YXNoYXJmYWNlQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiMmMyYmNlNjctOGJhMS00NGUyLTlhZjctNGZmZjY1YmFiNGI3IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6Inlhc2hhcmZhY2UiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJEZWZhdWx0IiwiZXhwIjoxNjY5NDQ5NjAwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyODEiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUyODEifQ.WSnFHcWFbn4K4lyT6S2RfLbykIIo-ANCifu8Y0MUrSY"
         
         
         const connection = new signalR.HubConnectionBuilder()
@@ -42,8 +46,8 @@
 
         //Triggers
 
-        connection.on("messageReceiver", (message, sender) => {
-            messageBox.append(message + " " + sender + "<br>");
+        connection.on("messageReceiver", (message, user) => {
+            messageBox.append(user + says + message + "<br>");
         })
 
 
@@ -51,7 +55,9 @@
 
         sendButton.addEventListener("click", () => {
             var message = inputBox.value;
-            connection.invoke("SendMessageAsync", message).catch(error => console.log(`An error was encountered ${error}`));
+            var channelId = channel.value;
+            connection.invoke("SendMessageAsync", message, channelId)
+                      .catch(error => console.log(`An error was encountered ${error}`));
         })
 
 

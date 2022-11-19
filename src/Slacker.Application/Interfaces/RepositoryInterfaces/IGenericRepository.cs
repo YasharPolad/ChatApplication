@@ -11,7 +11,7 @@ public interface IGenericRepository<TEntity> where TEntity: Entity, new() //Abst
 {
     Task CreateAsync(TEntity entity);  
     Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate);
-    Task<List<TEntity>?> GetAllAsync(Expression<Func<TEntity, bool>> predicate = null);
+    Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate = null);
     Task UpdateAsync(TEntity entity);
     Task DeleteAsync(TEntity entity);
 
