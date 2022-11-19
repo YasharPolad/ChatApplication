@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slacker</title>
+    <script src="signalr/signalr.min.js"></script>     
+</head>
+<body>
+
+    <input type="text" id="inputMessage">
+    <button type="submit" id="sendButton">Send</button>
+
+    <div id = "messages"></div>
+
+ 
+
+
+
+    <script>
+        const inputBox = document.getElementById("inputMessage");
+        const messageBox = document.getElementById("messages");
+        const sendButton = document.getElementById("sendButton");
+        var loginToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ5YXNoYXIueGFzcG9sYWRvdkBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImFmZGJiZGYwLWZmMjItNDEyYi1hYTI0LTA3ZTBhM2QwZjcxZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkRlZmF1bHQiLCJleHAiOjE2Njg5MzEyMDAsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTI4MSIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTI4MSJ9.85dOBoyKiYi5CeqLb_m5F7ZUzEf0h5OsHGB7Ywsbr_U"
+        
+        
+        const connection = new signalR.HubConnectionBuilder()
+                            .withUrl("http://localhost:5281/chat", { accessTokenFactory: () => this.loginToken })
+                            .build();
+        document.getElementById("sendButton").disabled = true;
+           
+
+        
+    
+        connection.start().then(function () {
+        document.getElementById("sendButton").disabled = false;
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+
+        //Triggers
+
+        connection.on("messageReceiver", (message, sender) => {
+            messageBox.append(message + " " + sender + "<br>");
+        })
+
+
+        // Methods
+
+        sendButton.addEventListener("click", () => {
+            var message = inputBox.value;
+            connection.invoke("SendMessageAsync", message).catch(error => console.log(`An error was encountered ${error}`));
+        })
+
+
+    </script> 
+</body>
+</html>

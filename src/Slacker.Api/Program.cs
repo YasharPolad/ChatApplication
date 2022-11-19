@@ -1,8 +1,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Slacker.Api.Authorization;
 using Slacker.Api.Filters;
+using Slacker.Api.Hubs;
 using Slacker.Api.Middlewares;
 using Slacker.Application.Users.Commands;
 using Slacker.Infrastructure;
@@ -36,6 +38,19 @@ builder.Services.AddAuthorization(configure =>
 });
 
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials()
+              .SetIsOriginAllowed(origin => true);
+    });
+});
+
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -48,11 +63,15 @@ app.UseGlobalExceptionHandler();
 
 app.UseStaticFiles();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<SlackerHub>("/chat");
 
 app.Run();
