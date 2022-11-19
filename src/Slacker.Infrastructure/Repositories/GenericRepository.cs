@@ -33,7 +33,7 @@ public class GenericRepository<TEntity, TContext> : IGenericRepository<TEntity>
         await _context.SaveChangesAsync();
     }
 
-    public virtual async Task<List<TEntity>?> GetAllAsync(Expression<Func<TEntity, bool>> predicate = null)
+    public virtual async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate = null)
     {
         if(predicate == null)
             return await _context.Set<TEntity>().ToListAsync();
