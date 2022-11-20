@@ -8,6 +8,10 @@
     <script src="signalr/signalr.min.js"></script>     
 </head>
 <body>
+    Access Token
+    <input type="text" id="accessToken">
+
+    <button style="color: green;" id="connectButton">Connect!</button>
 
     Connection Id
     <input type="number" id="connectionId">
@@ -15,7 +19,7 @@
     <input type="text" id="inputMessage">
     <button type="submit" id="sendButton">Send</button>
 
-    <div id = "messages"></div>
+    <div id = "messagesList", style="border-width: 0.05cm; border-color: brown; border-style: solid;min-height: 3cm;width: 70%;"></div>
 
  
 
@@ -23,31 +27,37 @@
 
     <script>
         const inputBox = document.getElementById("inputMessage");
-        const messageBox = document.getElementById("messages");
+        const messageBox = document.getElementById("messagesList");
         const channel = document.getElementById("connectionId");
         const sendButton = document.getElementById("sendButton");
-        var loginToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ5YXNoYXJmYWNlQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiMmMyYmNlNjctOGJhMS00NGUyLTlhZjctNGZmZjY1YmFiNGI3IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6Inlhc2hhcmZhY2UiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJEZWZhdWx0IiwiZXhwIjoxNjY5NDQ5NjAwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyODEiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUyODEifQ.WSnFHcWFbn4K4lyT6S2RfLbykIIo-ANCifu8Y0MUrSY"
+        var loginToken = document.getElementById("accessToken");
+        var connectButton = document.getElementById("connectButton");
         
         
         const connection = new signalR.HubConnectionBuilder()
-                            .withUrl("http://localhost:5281/chat", { accessTokenFactory: () => this.loginToken })
+                            .withUrl("http://localhost:5281/chat", { accessTokenFactory: () => this.loginToken.value })
                             .build();
         document.getElementById("sendButton").disabled = true;
            
 
         
-    
-        connection.start().then(function () {
-        document.getElementById("sendButton").disabled = false;
-        }).catch(function (err) {
-            return console.error(err.toString());
-        });
+        connectButton.addEventListener("click", () => {
+            connection.start().then(function () {
+            document.getElementById("sendButton").disabled = false;
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+
+        })
+        
 
 
         //Triggers
 
-        connection.on("messageReceiver", (message, user) => {
-            messageBox.append(user + says + message + "<br>");
+        connection.on("messageReceiver", (message, user, ts) => {
+            
+            yourMessage(message, user, ts);
+            
         })
 
 
@@ -56,9 +66,45 @@
         sendButton.addEventListener("click", () => {
             var message = inputBox.value;
             var channelId = channel.value;
-            connection.invoke("SendMessageAsync", message, channelId)
+            var ts = Date.now().toString();
+            connection.invoke("SendMessageAsync", message, channelId, ts)
                       .catch(error => console.log(`An error was encountered ${error}`));
+
+            myMessage(message, ts);
         })
+
+        function myMessage(message, ts){
+            var messageWrapper = document.createElement("div");
+            
+            messageWrapper.style.height = "1cm";
+            var messageDiv = document.createElement("div");
+            messageDiv.setAttribute("ts", ts);
+            messageDiv.style.backgroundColor = "beige";
+            messageDiv.style.width = "30%";
+            messageDiv.style.float = "right";
+            messageDiv.style.borderRadius = "1cm";
+            messageDiv.innerHTML = "Me: " + message;
+
+            messageWrapper.append(messageDiv);
+            messageBox.append(messageWrapper);
+        }
+
+        function yourMessage(message, user, ts)
+        {
+            var messageWrapper = document.createElement("div");
+            
+            messageWrapper.style.height = "1cm";
+
+            var messageDiv = document.createElement("div");
+            messageDiv.setAttribute("ts", ts);
+            messageDiv.style.backgroundColor = "grey";
+            messageDiv.style.width = "30%";
+            messageDiv.style.borderRadius = "1cm";
+            messageDiv.innerHTML = user + ": " + message;
+
+            messageWrapper.append(messageDiv);
+            messageBox.append(messageWrapper);
+        }
 
 
     </script> 

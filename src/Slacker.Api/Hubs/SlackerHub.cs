@@ -42,23 +42,15 @@ public class SlackerHub : Hub
         }
     }
 
-    public async Task SendMessageAsync(string message, string channelId)
+    public async Task SendMessageAsync(string message, string channelId, string ts)
     {
         var user = Context.User.FindFirst(ClaimTypes.Name) != null 
             ? Context.User.FindFirst(ClaimTypes.Name).Value 
             : "Anonymous User";
+
         
-        //var receivers = await GetReceivers(int.Parse(channelId)); this method causes each message to send db request to get receivers
-        //await Clients.Users(receivers).SendAsync("messageReceiver",message, user);
-        
-        await Clients.OthersInGroup(channelId).SendAsync("messageReceiver", message, user); //TODO: Only group members can send a message to a group!!!
+        await Clients.OthersInGroup(channelId).SendAsync("messageReceiver", message, user, ts); //TODO: Only group members can send a message to a group!!!
     }
 
-    //private async Task<List<string>> GetReceivers(int connectionId) 
-    //{
-    //    var employees = await _employeeRepository.GetAllAsync(e => e.Connections.Any(c => c.Id == connectionId));
-    //    var users = new List<string>();
-    //    employees.ForEach(emp => users.Add(emp.IdentityId));
-    //    return users;
-    //}
+
 }
