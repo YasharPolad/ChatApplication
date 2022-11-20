@@ -15,14 +15,17 @@
 
     Connection Id
     <input type="number" id="connectionId">
+
+    <div id = "messagesList", style="border-width: 0.05cm; border-color: brown; border-style: solid;min-height: 3cm;width: 100%;"></div>
+
+    
     Message
     <input type="text" id="inputMessage">
     <button type="submit" id="sendButton">Send</button>
-
-    <div id = "messagesList", style="border-width: 0.05cm; border-color: brown; border-style: solid;min-height: 3cm;width: 70%;"></div>
-
- 
-
+    <div id="replyMessage" style="visibility: hidden; opacity: 40%; background-color: lightslategray;width: 30%;">
+        
+    </div>
+    <button id="closeReply" style="color: red; visibility: hidden;">X</button>
 
 
     <script>
@@ -32,7 +35,9 @@
         const sendButton = document.getElementById("sendButton");
         var loginToken = document.getElementById("accessToken");
         var connectButton = document.getElementById("connectButton");
-        
+        var replyTs;
+        var replyMessage = document.getElementById("replyMessage");
+        var closeReplyButton = document.getElementById("closeReply");
         
         const connection = new signalR.HubConnectionBuilder()
                             .withUrl("http://localhost:5281/chat", { accessTokenFactory: () => this.loginToken.value })
@@ -49,14 +54,14 @@
             });
 
         })
-        
 
+        
 
         //Triggers
 
-        connection.on("messageReceiver", (message, user, ts) => {
+        connection.on("messageReceiver", (message, user, ts, replyTs) => {
             
-            yourMessage(message, user, ts);
+            yourMessage(message, user, ts, replyTs);
             
         })
 
@@ -67,44 +72,108 @@
             var message = inputBox.value;
             var channelId = channel.value;
             var ts = Date.now().toString();
-            connection.invoke("SendMessageAsync", message, channelId, ts)
+
+            connection.invoke("SendMessageAsync", message, channelId, ts, replyTs)
                       .catch(error => console.log(`An error was encountered ${error}`));
 
-            myMessage(message, ts);
+            myMessage(message, ts, replyTs);
         })
 
-        function myMessage(message, ts){
+        
+        
+        
+        //Helpers
+        
+        
+        function myMessage(message, ts, replyTs){
             var messageWrapper = document.createElement("div");
             
             messageWrapper.style.height = "1cm";
             var messageDiv = document.createElement("div");
-            messageDiv.setAttribute("ts", ts);
+            messageDiv.dataset.ts = ts;
             messageDiv.style.backgroundColor = "beige";
             messageDiv.style.width = "30%";
             messageDiv.style.float = "right";
             messageDiv.style.borderRadius = "1cm";
             messageDiv.innerHTML = "Me: " + message;
+            
+            var replyButton = document.createElement("button");
+            replyButton.innerHTML = "Reply";
+            replyButton.style.float = "left";
+            replyButton.style.backgroundColor = "brown";
+            replyButton.id = "replyButton";
+            messageDiv.appendChild(replyButton);
+
+            if(replyTs != null)
+            {
+                var parentMessage = document.querySelector(`[data-ts=${CSS.escape(replyTs)}]`).cloneNode(true);
+                parentMessage.removeChild(parentMessage.lastChild);
+                parentMessage.style.float = "right";
+                parentMessage.style.opacity = "50%";
+                messageWrapper.append(parentMessage);
+            }
 
             messageWrapper.append(messageDiv);
             messageBox.append(messageWrapper);
         }
 
-        function yourMessage(message, user, ts)
+        function yourMessage(message, user, ts, replyTs)
         {
             var messageWrapper = document.createElement("div");
             
             messageWrapper.style.height = "1cm";
 
             var messageDiv = document.createElement("div");
-            messageDiv.setAttribute("ts", ts);
+            messageDiv.dataset.ts = ts
             messageDiv.style.backgroundColor = "grey";
             messageDiv.style.width = "30%";
             messageDiv.style.borderRadius = "1cm";
             messageDiv.innerHTML = user + ": " + message;
 
+            var replyButton = document.createElement("button");
+            replyButton.innerHTML = "Reply";
+            replyButton.style.float = "right";
+            replyButton.style.backgroundColor = "brown";
+            replyButton.id = "replyButton";
+            messageDiv.appendChild(replyButton);
+
+            if(replyTs != null)
+            {
+                var parentMessage = document.querySelector(`[data-ts=${CSS.escape(replyTs)}]`).cloneNode(true);
+                parentMessage.removeChild(parentMessage.lastChild);
+                parentMessage.style.float = "left";
+                parentMessage.style.opacity = "50%";
+                messageWrapper.append(parentMessage);
+            }
+
+            messageWrapper.append(messageDiv);
+            messageBox.append(messageWrapper);
+
             messageWrapper.append(messageDiv);
             messageBox.append(messageWrapper);
         }
+
+
+        document.addEventListener('click',function(e){
+            if(e.target && e.target.id== 'replyButton'){
+                console.log(e.target.parentElement.textContent);
+                replyMessage.style.visibility = "visible";
+                var parent = e.target.parentElement.cloneNode(true);
+                parent.removeChild(parent.lastChild);
+                replyMessage.innerHTML = "Reply To:           " + parent.textContent;
+                replyTs = e.target.parentElement.dataset.ts;
+
+                closeReplyButton.style.visibility = "visible";
+            }
+        });
+
+        document.addEventListener("click", function(e){
+            if(e.target && e.target.id == "closeReply"){
+                replyTs = null;
+                replyMessage.style.visibility = "hidden";
+                closeReplyButton.style.visibility = "hidden";
+            }
+        })
 
 
     </script> 

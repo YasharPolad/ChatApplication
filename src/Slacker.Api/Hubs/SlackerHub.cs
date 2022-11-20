@@ -42,14 +42,14 @@ public class SlackerHub : Hub
         }
     }
 
-    public async Task SendMessageAsync(string message, string channelId, string ts)
+    public async Task SendMessageAsync(string message, string channelId, string ts, string replyTs)
     {
         var user = Context.User.FindFirst(ClaimTypes.Name) != null 
             ? Context.User.FindFirst(ClaimTypes.Name).Value 
             : "Anonymous User";
 
         
-        await Clients.OthersInGroup(channelId).SendAsync("messageReceiver", message, user, ts); //TODO: Only group members can send a message to a group!!!
+        await Clients.OthersInGroup(channelId).SendAsync("messageReceiver", message, user, ts, replyTs); //TODO: Only group members can send a message to a group!!!
     }
 
 
