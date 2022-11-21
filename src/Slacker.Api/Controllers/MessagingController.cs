@@ -91,6 +91,8 @@ public class MessagingController : BaseController
         var query = new GetAttachmentQuery { AttachmentId= attachmentId };
         var mediatrResponse = await _mediator.Send(query);
 
+        Response.Headers.Add("Content-Disposition", $"attachment;filename={mediatrResponse.Payload.FileName}");
+
         return mediatrResponse.IsSuccess == true
             ? File(mediatrResponse.Payload.FileStream, mediatrResponse.Payload.ContentType)
             : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));

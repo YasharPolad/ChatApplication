@@ -29,7 +29,7 @@ public class FileHandlerService : IFileHandlerService
         var filename = Path.GetFileName(path);
         result.FileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
         result.ContentType = GetMimeType(filename);
-       
+        result.FileName = filename;
         return result;
     }
 
