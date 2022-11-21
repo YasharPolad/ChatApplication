@@ -14,7 +14,6 @@ public class Employee : Entity
         Posts = new List<Post>();
     }
     public string FullName { get; set; }
-    public string SigalRId { get; set; }
     public string IdentityId { get; set; }
     public ICollection<Connection> Connections { get; set; }
 

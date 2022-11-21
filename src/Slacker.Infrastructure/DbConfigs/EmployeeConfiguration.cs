@@ -14,7 +14,6 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
     {
         //Properties
         builder.Property(b => b.FullName).HasMaxLength(50).IsRequired(false); //Make this required at the end. User has to enter name when registering
-        builder.Property(b => b.SigalRId).HasMaxLength(50).IsRequired(false);
 
         //Entity
         builder.HasKey(b => b.Id);

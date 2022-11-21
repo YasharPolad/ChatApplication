@@ -62,9 +62,9 @@ public class MessagingController : BaseController
 
     [HttpGet("posts")]
     [Authorize]
-    public async Task<IActionResult> GetPostsByConnection(GetPostsByConnection request)
+    public async Task<IActionResult> GetPostsByConnection(int connectionId)
     {
-        var query = _mapper.Map<GetPostsByConnectionQuery>(request);
+        var query = new GetPostsByConnectionQuery { ConnectionId = connectionId};
         var mediatrResponse = await _mediator.Send(query);
 
         return mediatrResponse.IsSuccess == true
@@ -74,9 +74,9 @@ public class MessagingController : BaseController
 
     [HttpGet("replies")]
     [Authorize]
-    public async Task<IActionResult> GetRepliesByPost(GetRepliesByPost request)
+    public async Task<IActionResult> GetRepliesByPost(int postId)
     {
-        var query = _mapper.Map<GetRepliesByPostQuery>(request);
+        var query = new GetRepliesByPostQuery { postId = postId };
         var mediatrResponse = await _mediator.Send(query);
 
         return mediatrResponse.IsSuccess == true
@@ -86,9 +86,9 @@ public class MessagingController : BaseController
 
     [HttpGet("download-file")]
     [Authorize]
-    public async Task<IActionResult> DownloadFile(GetAttachment request)
+    public async Task<IActionResult> DownloadFile(int attachmentId)
     {
-        var query = _mapper.Map<GetAttachmentQuery>(request);
+        var query = new GetAttachmentQuery { AttachmentId= attachmentId };
         var mediatrResponse = await _mediator.Send(query);
 
         return mediatrResponse.IsSuccess == true
