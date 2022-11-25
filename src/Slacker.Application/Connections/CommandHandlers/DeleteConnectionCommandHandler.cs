@@ -13,18 +13,18 @@ using System.Threading.Tasks;
 namespace Slacker.Application.Connections.CommandHandlers;
 internal class DeleteConnectionCommandHandler : IRequestHandler<DeleteConnectionCommand, BaseMediatrResult>
 {
-    private readonly ISlackerDbContext _context;
+    private readonly IConnectionRepository _connectionRepository;
 
-    public DeleteConnectionCommandHandler(ISlackerDbContext context)
+    public DeleteConnectionCommandHandler(IConnectionRepository connectionRepository)
     {
-        _context = context;
+        _connectionRepository = connectionRepository;
     }
 
     public async Task<BaseMediatrResult> Handle(DeleteConnectionCommand request, CancellationToken cancellationToken)
     {
         var result = new BaseMediatrResult();
 
-        var connectionToDelete = await _context.Connections.FirstOrDefaultAsync(c => c.Id == request.Id);
+        var connectionToDelete = await _connectionRepository.GetAsync(c => c.Id == request.Id);
         if(connectionToDelete is null)
         {
             result.IsSuccess = false;
@@ -32,8 +32,7 @@ internal class DeleteConnectionCommandHandler : IRequestHandler<DeleteConnection
             return result;
         }
 
-        _context.Connections.Remove(connectionToDelete);
-        await _context.SaveChangesAsync(cancellationToken);
+        await _connectionRepository.DeleteAsync(connectionToDelete);
         result.IsSuccess = true;
         return result;
     }

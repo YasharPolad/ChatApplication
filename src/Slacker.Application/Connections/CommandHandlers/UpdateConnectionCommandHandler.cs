@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Slacker.Application.Connections.Commands;
 using Slacker.Application.Interfaces;
+using Slacker.Application.Interfaces.RepositoryInterfaces;
 using Slacker.Application.Models;
 using System;
 using System.Collections.Generic;
@@ -11,17 +12,17 @@ using System.Threading.Tasks;
 namespace Slacker.Application.Connections.CommandHandlers;
 internal class UpdateConnectionCommandHandler : IRequestHandler<UpdateConnectionCommand, BaseMediatrResult>
 {
-    private readonly ISlackerDbContext _context;
-public UpdateConnectionCommandHandler(ISlackerDbContext context)
+    private readonly IConnectionRepository _connectionRepository;
+    public UpdateConnectionCommandHandler(IConnectionRepository connectionRepository)
     {
-        _context = context;
+        _connectionRepository = connectionRepository;
     }
 
     public async Task<BaseMediatrResult> Handle(UpdateConnectionCommand request, CancellationToken cancellationToken)
     {
         var result = new BaseMediatrResult();
-        
-        var connectionToUpdate = await _context.Connections.FindAsync(request.ConnectionId);
+
+        var connectionToUpdate = await _connectionRepository.GetAsync(c => c.Id == request.ConnectionId);
         if(connectionToUpdate is null)
         {
             result.IsSuccess = false;
@@ -30,9 +31,8 @@ public UpdateConnectionCommandHandler(ISlackerDbContext context)
         }
         connectionToUpdate.Name = request.Name;  //TODO: This is bullshit!
         connectionToUpdate.IsPrivate = request.IsPrivate;
-        
-        _context.Connections.Update(connectionToUpdate);
-        await _context.SaveChangesAsync(cancellationToken);
+
+        await _connectionRepository.UpdateAsync(connectionToUpdate);
 
         result.IsSuccess = true;
         return result;
