@@ -25,7 +25,6 @@ internal class AddEmployeeToConnectionCommandHandler : IRequestHandler<AddEmploy
     public async Task<BaseMediatrResult> Handle(AddEmployeeToConnectionCommand request, CancellationToken cancellationToken)
     {
         var result = new BaseMediatrResult();
-        var connections = await _connectionRepository.GetAllAsync(default, c => c.Employees);
         var connection = await _connectionRepository.GetAsync(c => c.Id == request.ConnectionId, c => c.Employees);
         if (connection == null)
         {
