@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Slacker.Application.Connections.Queries;
 using Slacker.Application.Interfaces;
+using Slacker.Application.Interfaces.RepositoryInterfaces;
 using Slacker.Application.Models;
 using Slacker.Domain.Entities;
 using System;
@@ -13,19 +14,20 @@ using System.Threading.Tasks;
 namespace Slacker.Application.Connections.QueryHandlers;
 internal class GetDirectMessagesByEmployeeQueryHandler : IRequestHandler<GetDirectMessagesByEmployeeQuery, MediatrResult<List<Connection>>>
 {
-    private readonly ISlackerDbContext _context;
-    public GetDirectMessagesByEmployeeQueryHandler(ISlackerDbContext context)
+    private readonly IEmployeeRepository _employeeRepository;
+    private readonly IConnectionRepository _connectionRepository;
+    public GetDirectMessagesByEmployeeQueryHandler(IEmployeeRepository employeeRepository, IConnectionRepository connectionRepository)
     {
-        _context = context;
+        _employeeRepository = employeeRepository;
+        _connectionRepository = connectionRepository;
     }
 
     public async Task<MediatrResult<List<Connection>>> Handle(GetDirectMessagesByEmployeeQuery request, CancellationToken cancellationToken)
     {
         var result = new MediatrResult<List<Connection>>();
 
-        var employee = _context.Employees
-            .Include(e => e.Connections)  //Should I instead filter here?
-            .FirstOrDefault(e => e.Id == request.EmployeeId);
+
+        var employee = await _employeeRepository.GetAsync(e => e.Id == request.EmployeeId);
 
         if (employee is null)  //Not necessary to check this, can return empty list instead. But checking is better I think.
         {
@@ -34,8 +36,11 @@ internal class GetDirectMessagesByEmployeeQueryHandler : IRequestHandler<GetDire
             return result;
         }
 
+        var channels = await _connectionRepository.GetAllAsync(c => c.IsChannel == false && c.Employees.Contains(employee), c => c.Employees);
+
+
         result.IsSuccess = true;
-        result.Payload = employee.Connections.Where(c => c.IsChannel == false).ToList();
+        result.Payload = channels;
         return result;
     }
 }
