@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,16 +34,27 @@ public class GenericRepository<TEntity, TContext> : IGenericRepository<TEntity>
         await _context.SaveChangesAsync();
     }
 
-    public virtual async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate = null)
-    {
-        if(predicate == null)
-            return await _context.Set<TEntity>().ToListAsync();
-        return await _context.Set<TEntity>().Where(predicate).ToListAsync();
+    public virtual async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate = null,
+                                                         params Expression<Func<TEntity, object>>[] includes)
+    {      
+        return QueryBuilder(predicate, includes).ToList();
     }
 
-    public virtual async Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate)
+    public virtual async Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate,
+                                                 params Expression<Func<TEntity, object>>[] includes)
     {
-        return await _context.Set<TEntity>().FirstOrDefaultAsync(predicate);
+        var query = QueryBuilder(default, includes);
+        return query.FirstOrDefault(predicate);
+    }
+
+    private IQueryable<TEntity> QueryBuilder(Expression<Func<TEntity, bool>> predicate = null,
+                                             params Expression<Func<TEntity, object>>[] includes)
+    {
+        var query = predicate is null
+                    ? _context.Set<TEntity>().AsQueryable()
+                    : _context.Set<TEntity>().Where(predicate);
+
+        return includes.Aggregate(query, (currentQuery, includeProperty) => currentQuery.Include(includeProperty));
     }
 
     public virtual async Task UpdateAsync(TEntity entity)
