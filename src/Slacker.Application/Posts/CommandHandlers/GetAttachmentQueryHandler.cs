@@ -16,7 +16,7 @@ internal class GetAttachmentQueryHandler : IRequestHandler<GetAttachmentQuery, M
     private readonly IAttachmentRepository _attachmentRepository;
     private readonly IFileHandlerService _fileHandlerService;
 
-    public GetAttachmentQueryHandler(ISlackerDbContext context, IAttachmentRepository attachmentRepository, IFileHandlerService fileHandlerService)
+    public GetAttachmentQueryHandler(IAttachmentRepository attachmentRepository, IFileHandlerService fileHandlerService)
     {
         _attachmentRepository = attachmentRepository;
         _fileHandlerService = fileHandlerService;

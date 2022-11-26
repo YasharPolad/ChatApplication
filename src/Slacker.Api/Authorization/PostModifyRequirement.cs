@@ -15,26 +15,26 @@ public class PostModifyRequirement : IAuthorizationRequirement
 public class PostModifyRequirementHandler : AuthorizationHandler<PostModifyRequirement>
 {
     private readonly IHttpContextAccessor _contextAccessor;
-    private readonly ISlackerDbContext _context;
+    private readonly IPostRepository _postRepository;
 
-    public PostModifyRequirementHandler(IHttpContextAccessor contextAccessor, 
-           ISlackerDbContext context)
+    public PostModifyRequirementHandler(IHttpContextAccessor contextAccessor,
+           IPostRepository postRepository)
     {
         _contextAccessor = contextAccessor;
-        _context = context;
+        _postRepository = postRepository;
     }
 
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PostModifyRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PostModifyRequirement requirement)
     {
         if(!context.User.HasClaim(claim => claim.Type == ClaimTypes.NameIdentifier))
-            return Task.CompletedTask;
+            await Task.CompletedTask;
 
         var userId = context.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         var postId = int.Parse(_contextAccessor.HttpContext.GetRouteValue("id").ToString());
-        var post = _context.Posts.Include(p => p.Employee).FirstOrDefault(p => p.Id == postId);
+        var post = await _postRepository.GetAsync(p => p.Id == postId, p => p.Employee);
         if (post.Employee.IdentityId == userId)
             context.Succeed(requirement);
         
-        return Task.CompletedTask;
+        await Task.CompletedTask;
     }
 }
