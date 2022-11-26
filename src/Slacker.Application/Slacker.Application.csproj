@@ -30,4 +30,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.10" />
   </ItemGroup>
 
+  <ItemGroup>
+	<InternalsVisibleTo Include="Slacker.Application.UnitTests" />
+  </ItemGroup>
+
 </Project>
