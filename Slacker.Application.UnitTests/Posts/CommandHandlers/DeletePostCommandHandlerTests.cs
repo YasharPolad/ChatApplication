@@ -50,7 +50,7 @@ public class DeletePostCommandHandlerTests
         var command = new DeletePostCommand { Id = It.IsAny<int>() };
 
         _postRepositoryMock.Setup(repo => repo.GetAsync(
-            It.IsAny<Expression<Func<Post, bool>>>())).ReturnsAsync(_postMock.Object);
+            It.IsAny<Expression<Func<Post, bool>>>())).ReturnsAsync(_postMock.Object); //TODO: Why can I not use It.IsAny<Post>()?
         var handler = new DeletePostCommandHandler(_postRepositoryMock.Object);
 
         //Act
