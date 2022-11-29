@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Slacker.Application.UnitTests.Posts.CommandHandlers;
+namespace Slacker.Application.UnitTests.Connections.CommandHandlers;
 public class CreateConnectionCommandHandlerTests
 {
     private readonly Mock<IConnectionRepository> _connectionRepositoryMock;
@@ -30,9 +30,9 @@ public class CreateConnectionCommandHandlerTests
         var command = new CreateConnectionCommand
         {
             CreatingUserId = Guid.NewGuid().ToString(),
-            IsChannel= true,
-            IsPrivate= false,
-            Name= "Mock Channel"
+            IsChannel = true,
+            IsPrivate = false,
+            Name = "Mock Channel"
         };
 
         var employee = new Employee
