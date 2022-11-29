@@ -34,7 +34,7 @@ public class ConnectionController : BaseController
 
     [HttpPut]
     [Authorize]
-    public async Task<IActionResult> AddEmployeeToConnection(AddEmployeeToConnection request)
+    public async Task<IActionResult> AddEmployeeToConnection(AddEmployeeToConnection request) //TODO: Adder must be a member of the connection himself
     {
         var command = _mapper.Map<AddEmployeeToConnectionCommand>(request);
         var mediatrResponse = await _mediator.Send(command);
