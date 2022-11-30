@@ -30,7 +30,7 @@ internal class GetAttachmentQueryHandler : IRequestHandler<GetAttachmentQuery, M
         if(attachment is null)
         {
             result.IsSuccess = false;
-            result.Errors.Add("File not found");
+            result.Errors.Add("Attachment not found");
             return result;
         }
 
