@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Slacker.Application\Slacker.Application.csproj" />
+    <ProjectReference Include="..\..\src\Slacker.Application\Slacker.Application.csproj" />
   </ItemGroup>
 
 </Project>
