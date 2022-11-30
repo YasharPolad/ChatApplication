@@ -15,11 +15,9 @@ namespace Slacker.Application.Connections.QueryHandlers;
 internal class GetDirectMessagesByEmployeeQueryHandler : IRequestHandler<GetDirectMessagesByEmployeeQuery, MediatrResult<List<Connection>>>
 {
     private readonly IEmployeeRepository _employeeRepository;
-    private readonly IConnectionRepository _connectionRepository;
-    public GetDirectMessagesByEmployeeQueryHandler(IEmployeeRepository employeeRepository, IConnectionRepository connectionRepository)
+    public GetDirectMessagesByEmployeeQueryHandler(IEmployeeRepository employeeRepository)
     {
         _employeeRepository = employeeRepository;
-        _connectionRepository = connectionRepository;
     }
 
     public async Task<MediatrResult<List<Connection>>> Handle(GetDirectMessagesByEmployeeQuery request, CancellationToken cancellationToken)
@@ -27,7 +25,7 @@ internal class GetDirectMessagesByEmployeeQueryHandler : IRequestHandler<GetDire
         var result = new MediatrResult<List<Connection>>();
 
 
-        var employee = await _employeeRepository.GetAsync(e => e.Id == request.EmployeeId);
+        var employee = await _employeeRepository.GetAsync(e => e.Id == request.EmployeeId, e => e.Connections);
 
         if (employee is null)  //Not necessary to check this, can return empty list instead. But checking is better I think.
         {
@@ -36,7 +34,7 @@ internal class GetDirectMessagesByEmployeeQueryHandler : IRequestHandler<GetDire
             return result;
         }
 
-        var channels = await _connectionRepository.GetAllAsync(c => c.IsChannel == false && c.Employees.Contains(employee), c => c.Employees);
+        var channels = employee.Connections.Where(c => c.IsChannel == false).ToList();
 
 
         result.IsSuccess = true;
