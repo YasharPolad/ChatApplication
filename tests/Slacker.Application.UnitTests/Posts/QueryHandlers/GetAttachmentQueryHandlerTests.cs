@@ -43,7 +43,7 @@ public class GetAttachmentQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_Should_ReturnError_IfFileServiceReturnsNull()
+    public async Task Handle_Should_ReturnError_IfFileIsntFound()
     {
         //Arrange
         var attachmentFake = new Attachment();
@@ -54,7 +54,7 @@ public class GetAttachmentQueryHandlerTests
 
         _fileHandlerServiceMock
             .Setup(service => service.GetFile(It.IsAny<string>()))
-            .Returns((FileDto)null);
+            .Returns(new FileDto());
 
         var handler = new GetAttachmentQueryHandler(_attachmentRepositoryMock.Object, _fileHandlerServiceMock.Object);
         //Act
@@ -72,7 +72,10 @@ public class GetAttachmentQueryHandlerTests
         //Arrange
         var attachmentFake = new Attachment();
 
-        var fileDtoFake = new FileDto();
+        var fileDtoFake = new FileDto
+        {
+            FileName = "fake file"
+        };
         _attachmentRepositoryMock
             .Setup(repo => repo.GetAsync(It.IsAny<Expression<Func<Attachment, bool>>>()))
             .ReturnsAsync(attachmentFake);

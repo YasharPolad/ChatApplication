@@ -37,7 +37,7 @@ internal class GetAttachmentQueryHandler : IRequestHandler<GetAttachmentQuery, M
         var filePath = attachment.FilePath;
         var fileResult = _fileHandlerService.GetFile(filePath);
 
-        if(fileResult.FileStream is null)
+        if(fileResult.FileName is null)
         {
             result.IsSuccess = false;
             result.Errors.Add("File not found");
