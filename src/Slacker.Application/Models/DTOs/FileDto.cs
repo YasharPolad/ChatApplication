@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Slacker.Application.Models.DTOs;
 public class FileDto
 {
-    public FileStream FileStream { get; set; }
+    public string FilePath { get; set; }
     public string ContentType { get; set; }
     public string FileName { get; set; }
 }

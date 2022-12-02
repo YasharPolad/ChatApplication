@@ -94,7 +94,8 @@ public class MessagingController : BaseController
         if(mediatrResponse.IsSuccess == true)
         {
             Response.Headers.Add("Content-Disposition", $"attachment;filename={mediatrResponse.Payload.FileName}");
-            return File(mediatrResponse.Payload.FileStream, mediatrResponse.Payload.ContentType);
+            var fs = System.IO.File.OpenRead(mediatrResponse.Payload.FilePath);
+            return File(fs, mediatrResponse.Payload.ContentType);
         }
         return BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
