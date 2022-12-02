@@ -32,11 +32,15 @@ builder.Services.AddLogging();
 builder.AddInfrastructure();
 
 builder.Services.AddScoped<IAuthorizationHandler, PostModifyRequirementHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, PostCreateRequirementHandler>();
 
 builder.Services.AddAuthorization(configure =>
 {
     configure.AddPolicy("OnlyPostCreatorCanEdit", policy => policy
             .Requirements.Add(new PostModifyRequirement()));
+
+    configure.AddPolicy("OnlyConnectionMemberCanPost", policy => policy
+            .Requirements.Add(new PostCreateRequirement()));
 });
 
 

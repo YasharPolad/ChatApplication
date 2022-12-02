@@ -23,7 +23,7 @@ public class MessagingController : BaseController
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(policy: "OnlyConnectionMemberCanPost")]
     public async Task<IActionResult> CreatePost([FromForm]CreatePost request) //TODO: Maybe need a seperate controller for replies. A reply should be able to assign a connection to itself
     {
         var command = _mapper.Map<CreatePostCommand>(request);
