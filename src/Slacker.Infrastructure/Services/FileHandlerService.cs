@@ -27,9 +27,12 @@ public class FileHandlerService : IFileHandlerService
         var result = new FileDto();
         
         var filename = Path.GetFileName(path);
-        result.FileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        result.ContentType = GetMimeType(filename);
-        result.FileName = filename;
+        if(File.Exists(path))
+        {
+            result.FileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            result.ContentType = GetMimeType(filename);
+            result.FileName = filename;
+        }           
         return result;
     }
 

@@ -89,13 +89,14 @@ public class MessagingController : BaseController
     public async Task<IActionResult> DownloadFile(int attachmentId)
     {
         var query = new GetAttachmentQuery { AttachmentId= attachmentId };
-        var mediatrResponse = await _mediator.Send(query);
+        var mediatrResponse = await _mediator.Send(query);      
 
-        Response.Headers.Add("Content-Disposition", $"attachment;filename={mediatrResponse.Payload.FileName}");
-
-        return mediatrResponse.IsSuccess == true
-            ? File(mediatrResponse.Payload.FileStream, mediatrResponse.Payload.ContentType)
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+        if(mediatrResponse.IsSuccess == true)
+        {
+            Response.Headers.Add("Content-Disposition", $"attachment;filename={mediatrResponse.Payload.FileName}");
+            return File(mediatrResponse.Payload.FileStream, mediatrResponse.Payload.ContentType);
+        }
+        return BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
     //TODO: Implement add/remove reaction to post
