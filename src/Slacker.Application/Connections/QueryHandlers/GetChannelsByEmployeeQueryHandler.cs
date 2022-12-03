@@ -15,9 +15,11 @@ namespace Slacker.Application.Connections.QueryHandlers;
 internal class GetChannelsByEmployeeQueryHandler : IRequestHandler<GetChannelsByEmployeeQuery, MediatrResult<List<Connection>>>
 {
     private readonly IEmployeeRepository _employeeRepository;
-    public GetChannelsByEmployeeQueryHandler(IEmployeeRepository employeeRepository)
+    private readonly IConnectionRepository _connectionRepository;
+    public GetChannelsByEmployeeQueryHandler(IEmployeeRepository employeeRepository, IConnectionRepository connectionRepository)
     {
         _employeeRepository = employeeRepository;
+        _connectionRepository = connectionRepository;
     }
 
     public async Task<MediatrResult<List<Connection>>> Handle(GetChannelsByEmployeeQuery request, CancellationToken cancellationToken)
@@ -34,7 +36,8 @@ internal class GetChannelsByEmployeeQueryHandler : IRequestHandler<GetChannelsBy
             return result;
         }
 
-        var channels = employee.Connections.Where(c => c.IsChannel == true).ToList();
+        var channels = await _connectionRepository
+            .GetAllAsync(c => c.Employees.Any(e => e.Id == employee.Id) && c.IsChannel == true, c => c.Employees);
 
 
         result.IsSuccess = true;

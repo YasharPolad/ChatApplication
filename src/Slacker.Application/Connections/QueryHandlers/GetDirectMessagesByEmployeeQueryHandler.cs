@@ -15,9 +15,12 @@ namespace Slacker.Application.Connections.QueryHandlers;
 internal class GetDirectMessagesByEmployeeQueryHandler : IRequestHandler<GetDirectMessagesByEmployeeQuery, MediatrResult<List<Connection>>>
 {
     private readonly IEmployeeRepository _employeeRepository;
-    public GetDirectMessagesByEmployeeQueryHandler(IEmployeeRepository employeeRepository)
+    private readonly IConnectionRepository _connectionRepository;
+
+    public GetDirectMessagesByEmployeeQueryHandler(IEmployeeRepository employeeRepository, IConnectionRepository connectionRepository)
     {
         _employeeRepository = employeeRepository;
+        _connectionRepository = connectionRepository;
     }
 
     public async Task<MediatrResult<List<Connection>>> Handle(GetDirectMessagesByEmployeeQuery request, CancellationToken cancellationToken)
@@ -34,7 +37,9 @@ internal class GetDirectMessagesByEmployeeQueryHandler : IRequestHandler<GetDire
             return result;
         }
 
-        var channels = employee.Connections.Where(c => c.IsChannel == false).ToList();
+        //var channels = employee.Connections.Where(c => c.IsChannel == false).ToList();
+        var channels = await _connectionRepository
+            .GetAllAsync(c => c.Employees.Any(e => e.Id == employee.Id) && c.IsChannel == false, c => c.Employees);
 
 
         result.IsSuccess = true;
