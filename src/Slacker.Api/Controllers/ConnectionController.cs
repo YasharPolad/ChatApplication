@@ -29,7 +29,7 @@ public class ConnectionController : BaseController
 
         return mediatrResponse.IsSuccess == true
             ? Ok(_mapper.Map<ConnectionResponse>(mediatrResponse.Payload))
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse)); 
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse)); 
     }
 
     [HttpPut]
@@ -41,7 +41,7 @@ public class ConnectionController : BaseController
 
         return mediatrResponse.IsSuccess == true
             ? Ok($"Employee with Id {request.EmployeeId} was added to connection {request.ConnectionId}")
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
 
     }
     
@@ -54,7 +54,7 @@ public class ConnectionController : BaseController
 
         return mediatrResponse.IsSuccess == true
             ? Ok($"Connection with ID number {id} has been deleted")
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
     [HttpPut("{id}")]
@@ -67,7 +67,7 @@ public class ConnectionController : BaseController
 
         return mediatrResponse.IsSuccess == true
             ? Ok($"Connection with ID number {id} has been updated")
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
     [HttpGet]
@@ -77,11 +77,9 @@ public class ConnectionController : BaseController
         var query = new GetChannelsByEmployeeQuery { EmployeeId = employeeId };
         var mediatrResponse = await _mediator.Send(query);
 
-        _logger.LogDebug("hello from the controller//////////////////////////////////////////////////////////////////////////////");
-
         return mediatrResponse.IsSuccess == true
             ? Ok(_mapper.Map<List<ConnectionResponse>>(mediatrResponse.Payload))  
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
     [HttpGet("messages")]
@@ -93,6 +91,6 @@ public class ConnectionController : BaseController
 
         return mediatrResponse.IsSuccess == true
             ? Ok(_mapper.Map<List<ConnectionResponse>>(mediatrResponse.Payload)) 
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 }

@@ -20,7 +20,7 @@ namespace Slacker.Api.Controllers;
 [ApiController]
 public class AuthController : BaseController
 {
-    public AuthController(IMapper mapper, IMediator mediator, ILogger logger) : base(mapper, mediator, logger)
+    public AuthController(IMapper mapper, IMediator mediator, ILogger<AuthController> logger) : base(mapper, mediator, logger)
     {
     }
 
@@ -33,7 +33,7 @@ public class AuthController : BaseController
 
         return mediatrResponse.IsSuccess == true
             ? Ok("Registration Successful")
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse)); //TODO: Automatically return different error responses depending on the error code
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse)); //TODO: Automatically return different error responses depending on the error code
     }
 
     [HttpPost("login")]
@@ -45,7 +45,7 @@ public class AuthController : BaseController
 
         return mediatrResponse.IsSuccess
             ? Ok(_mapper.Map<LoginResponse>(mediatrResponse.Payload))
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
 
     }
 
@@ -61,7 +61,7 @@ public class AuthController : BaseController
         
         return mediatrResponse.IsSuccess
             ? Ok("You can login now!")
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
     [HttpPost("forgot-password")] //should this go to a command or query?
@@ -72,7 +72,7 @@ public class AuthController : BaseController
 
         return mediatrResponse.IsSuccess 
             ? Ok("Your email has been sent!") 
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
 
     }
 
@@ -91,7 +91,7 @@ public class AuthController : BaseController
 
         return mediatrResponse.IsSuccess 
             ? Ok("Your password is reset!") 
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
     [Authorize]
@@ -104,6 +104,6 @@ public class AuthController : BaseController
 
         return mediatrResponse.IsSuccess
             ? Ok("Your password is changed!")
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 }

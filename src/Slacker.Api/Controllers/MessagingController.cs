@@ -18,7 +18,7 @@ namespace Slacker.Api.Controllers;
 [ApiController]
 public class MessagingController : BaseController
 {
-    public MessagingController(IMapper mapper, IMediator mediator, ILogger logger) : base(mapper, mediator, logger)
+    public MessagingController(IMapper mapper, IMediator mediator, ILogger<MessagingController> logger) : base(mapper, mediator, logger)
     {
     }
 
@@ -32,7 +32,7 @@ public class MessagingController : BaseController
 
         return mediatrResponse.IsSuccess == true
             ? Ok(_mapper.Map<CreatePostResponse>(mediatrResponse.Payload))     
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
     [HttpPut("{id}")]
@@ -45,7 +45,7 @@ public class MessagingController : BaseController
 
         return mediatrResponse.IsSuccess == true
             ? Ok("Post is updated")
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
     [HttpDelete("{id}")]
@@ -57,7 +57,7 @@ public class MessagingController : BaseController
 
         return mediatrResponse.IsSuccess == true
             ? Ok("Post is deleted")
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
     [HttpGet("posts")]
@@ -69,7 +69,7 @@ public class MessagingController : BaseController
 
         return mediatrResponse.IsSuccess == true
             ? Ok(_mapper.Map<List<GetPostResponse>>(mediatrResponse.Payload))
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
     [HttpGet("replies")]
@@ -81,7 +81,7 @@ public class MessagingController : BaseController
 
         return mediatrResponse.IsSuccess == true
             ? Ok(_mapper.Map<List<GetReplyResponse>>(mediatrResponse.Payload))
-            : BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+            : ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
     [HttpGet("download-file")]
@@ -97,7 +97,7 @@ public class MessagingController : BaseController
             var fs = System.IO.File.OpenRead(mediatrResponse.Payload.FilePath);
             return File(fs, mediatrResponse.Payload.ContentType);
         }
-        return BadRequest(_mapper.Map<ErrorResponse>(mediatrResponse));
+        return ErrorResponseHandler(_mapper.Map<ErrorResponse>(mediatrResponse));
     }
 
     //TODO: Implement add/remove reaction to post
