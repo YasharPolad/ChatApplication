@@ -18,7 +18,7 @@ namespace Slacker.Api.Controllers;
 [ApiController]
 public class MessagingController : BaseController
 {
-    public MessagingController(IMapper mapper, IMediator mediator) : base(mapper, mediator)
+    public MessagingController(IMapper mapper, IMediator mediator, ILogger logger) : base(mapper, mediator, logger)
     {
     }
 

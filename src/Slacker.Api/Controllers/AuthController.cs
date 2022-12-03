@@ -20,7 +20,7 @@ namespace Slacker.Api.Controllers;
 [ApiController]
 public class AuthController : BaseController
 {
-    public AuthController(IMapper mapper, IMediator mediator) : base(mapper, mediator)
+    public AuthController(IMapper mapper, IMediator mediator, ILogger logger) : base(mapper, mediator, logger)
     {
     }
 

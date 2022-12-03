@@ -15,7 +15,7 @@ namespace Slacker.Api.Controllers;
 [ApiController]
 public class ConnectionController : BaseController
 {
-    public ConnectionController(IMapper mapper, IMediator mediator) : base(mapper, mediator)
+    public ConnectionController(IMapper mapper, IMediator mediator, ILogger<ConnectionController> logger) : base(mapper, mediator, logger)
     {
     }
 
@@ -76,6 +76,8 @@ public class ConnectionController : BaseController
     {
         var query = new GetChannelsByEmployeeQuery { EmployeeId = employeeId };
         var mediatrResponse = await _mediator.Send(query);
+
+        _logger.LogDebug("hello from the controller//////////////////////////////////////////////////////////////////////////////");
 
         return mediatrResponse.IsSuccess == true
             ? Ok(_mapper.Map<List<ConnectionResponse>>(mediatrResponse.Payload))  
