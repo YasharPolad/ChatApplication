@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3ACE1493
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slacker.Application.UnitTests", "tests\Slacker.Application.UnitTests\Slacker.Application.UnitTests.csproj", "{5626ABCC-9C20-4B40-A9D0-72B71A79B013}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slacker.Infrastructure.UnitTests", "Slacker.Infrastructure.UnitTests\Slacker.Infrastructure.UnitTests.csproj", "{E4E77459-8D96-4E12-ACA1-5482E166B27A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slacker.Infrastructure.UnitTests", "tests\Slacker.Infrastructure.UnitTests\Slacker.Infrastructure.UnitTests.csproj", "{AD653264-F30A-4428-AE28-EA5BC638D33C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +45,10 @@ Global
 		{5626ABCC-9C20-4B40-A9D0-72B71A79B013}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5626ABCC-9C20-4B40-A9D0-72B71A79B013}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5626ABCC-9C20-4B40-A9D0-72B71A79B013}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E4E77459-8D96-4E12-ACA1-5482E166B27A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E4E77459-8D96-4E12-ACA1-5482E166B27A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E4E77459-8D96-4E12-ACA1-5482E166B27A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E4E77459-8D96-4E12-ACA1-5482E166B27A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD653264-F30A-4428-AE28-EA5BC638D33C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD653264-F30A-4428-AE28-EA5BC638D33C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD653264-F30A-4428-AE28-EA5BC638D33C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD653264-F30A-4428-AE28-EA5BC638D33C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,7 +59,7 @@ Global
 		{843C97FC-CCEA-4025-8E55-7CFAD13B3DE7} = {D5B4C5E5-A497-4072-9845-41EFA0E69B18}
 		{839C65BD-F98E-44AB-BAF1-6B15DB203CC7} = {D5B4C5E5-A497-4072-9845-41EFA0E69B18}
 		{5626ABCC-9C20-4B40-A9D0-72B71A79B013} = {3ACE1493-8FDC-4688-BFA8-E93574340F39}
-		{E4E77459-8D96-4E12-ACA1-5482E166B27A} = {3ACE1493-8FDC-4688-BFA8-E93574340F39}
+		{AD653264-F30A-4428-AE28-EA5BC638D33C} = {3ACE1493-8FDC-4688-BFA8-E93574340F39}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EB604AD0-6932-479F-926D-64EA4DC5C980}

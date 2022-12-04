@@ -15,37 +15,16 @@ namespace Slacker.Application.UnitTests.Connections.QueryHandlers;
 public class GetChannelsByEmployeeHandlerTests
 {
     private readonly Mock<IEmployeeRepository> _employeeRepositoryMock;
+    private readonly Mock<IConnectionRepository> _connectionRepositoryMock; 
     Employee employee;
     GetChannelsByEmployeeQuery query;
     public GetChannelsByEmployeeHandlerTests()
     {
         _employeeRepositoryMock = new();
+        _connectionRepositoryMock = new();
         query = new GetChannelsByEmployeeQuery { EmployeeId = 12 }; //Random query
 
         employee = new Employee();
-        employee.Connections = new List<Connection>
-        {
-            new Connection
-            {
-                IsChannel = true,
-                Name = "Channel Connection 1"
-            },
-            new Connection
-            {
-                IsChannel = true,
-                Name = "Channel Connection 2"
-            },
-            new Connection
-            {
-                IsChannel = false,
-                Name = "DM Connection 1"
-            },
-            new Connection
-            {
-                IsChannel = true,
-                Name = "DM Connection 2"
-            },
-        };
     }
 
 
@@ -58,7 +37,7 @@ public class GetChannelsByEmployeeHandlerTests
                                         It.IsAny<Expression<Func<Employee, object>>>()))
             .ReturnsAsync((Employee)null);
 
-        var handler = new GetChannelsByEmployeeQueryHandler(_employeeRepositoryMock.Object);
+        var handler = new GetChannelsByEmployeeQueryHandler(_employeeRepositoryMock.Object, _connectionRepositoryMock.Object);
         //Act
         var result = await handler.Handle(query, default);
 
@@ -77,8 +56,12 @@ public class GetChannelsByEmployeeHandlerTests
             .Setup(repo => repo.GetAsync(It.IsAny<Expression<Func<Employee, bool>>>(),
                                          It.IsAny<Expression<Func<Employee, object>>>()))
             .ReturnsAsync(employee);
+        _connectionRepositoryMock
+             .Setup(repo => repo.GetAllAsync(It.IsAny<Expression<Func<Connection, bool>>>(),
+                                             It.IsAny<Expression<Func<Connection, object>>>()))
+             .ReturnsAsync(new List<Connection>());
 
-        var handler = new GetChannelsByEmployeeQueryHandler(_employeeRepositoryMock.Object);
+        var handler = new GetChannelsByEmployeeQueryHandler(_employeeRepositoryMock.Object, _connectionRepositoryMock.Object);
         //Act
         var result = await handler.Handle(query, default);
 
@@ -86,23 +69,5 @@ public class GetChannelsByEmployeeHandlerTests
         result.IsSuccess.ShouldBe(true);
         result.Errors.ShouldNotContain("This employee doesn't exist");
 
-    }
-
-    [Fact]
-    public async Task Handle_Should_ReturnOnlyChannels()
-    {
-        //Arrange
-        _employeeRepositoryMock
-            .Setup(repo => repo.GetAsync(It.IsAny<Expression<Func<Employee, bool>>>(), 
-                                        It.IsAny<Expression<Func<Employee, object>>>()))
-            .ReturnsAsync(employee);
-
-        var handler = new GetChannelsByEmployeeQueryHandler(_employeeRepositoryMock.Object);
-        //Act
-        var result = await handler.Handle(query, default);
-
-        //Assert
-        result.Payload.ShouldBeOfType(typeof(List<Connection>));
-        result.Payload.ShouldNotContain(c => c.IsChannel == false); //All of the should be connections
     }
 }
