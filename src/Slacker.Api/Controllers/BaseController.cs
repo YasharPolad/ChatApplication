@@ -19,8 +19,7 @@ public class BaseController : ControllerBase
         _mediator = mediator;
         _logger = logger;
     }
-
-    public IActionResult ErrorResponseHandler(ErrorResponse response)
+    protected IActionResult ErrorResponseHandler(ErrorResponse response)
     {
         response.Errors.ForEach(e => _logger.LogWarning(e));
         return BadRequest(response);
