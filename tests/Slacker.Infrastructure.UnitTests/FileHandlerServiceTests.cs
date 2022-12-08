@@ -18,7 +18,7 @@ public class FileHandlerServiceTests : IDisposable
     public FileHandlerServiceTests()
     {
         _envMock = new();
-        baseDirectory = @"..\..\src\Slacker.Api\wwwroot\Uploads";
+        baseDirectory = @"..\..\";
 
         //Create test file
         var filePath = Path.Combine(baseDirectory, "fakeFile.txt");
