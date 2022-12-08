@@ -18,7 +18,7 @@ public class FileHandlerServiceTests : IDisposable
     public FileHandlerServiceTests()
     {
         _envMock = new();
-        baseDirectory = @"..\..\";
+        baseDirectory = "";
 
         //Create test file
         var filePath = Path.Combine(baseDirectory, "fakeFile.txt");
