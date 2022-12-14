@@ -55,4 +55,5 @@ to enter the connection ID of which both the users are members of.
 
 ### PreRequisites
 Change the sender email in appsettings for sendgrid
+
 Add you sendgrid api key to the user secrets
