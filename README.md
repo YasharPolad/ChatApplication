@@ -1,21 +1,21 @@
 
-#A Chat API and Realtime SignalR application
+# A Chat API and Realtime SignalR application
 
-######Clean Architecture
+###### Clean Architecture
 
-######CQRS with Mediator
+###### CQRS with Mediator
 
-######JWT Authentication
+###### JWT Authentication
 
-######Custom Policy-Based Authorization
+###### Custom Policy-Based Authorization
 
-######Sendgrid as Email Service
+###### Sendgrid as Email Service
 
-######Serilog Logging
+###### Serilog Logging
 
-######xUnit Unit Testing
+###### xUnit Unit Testing
 
-###Description:
+### Description:
 
 This is a chat application composed of 2 main components: The Web Api and SignalR 
 To use the app you need to run it and open the swagger page then
@@ -53,6 +53,6 @@ with the jwt token of the other user) must get that message. You can write messa
 UI is awe-inspiring!) and if all goes well they need to go back and forth between the users. Make sure 
 to enter the connection ID of which both the users are members of. 
 
-###PreRequisites
+### PreRequisites
 Change the sender email in appsettings for sendgrid
 Add you sendgrid api key to the user secrets
